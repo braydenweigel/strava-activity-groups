@@ -2,7 +2,7 @@
 //  StravaActivityGroupsUITestsLaunchTests.swift
 //  StravaActivityGroupsUITests
 //
-//  Created by Brayden Weigel on 1/12/26.
+//  Created by Brayden Weigel on 1/15/26.
 //
 
 import XCTest

@@ -1,6 +1,8 @@
 package router
 
 import (
+	"strava-activity-groups/backend/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,22 +13,22 @@ func SetupRouter() *gin.Engine {
 
 	auth := api.Group("/auth")
 	{
-		auth.GET("/login")
-		auth.GET("/refresh")
+		auth.GET("/login", handlers.Login)
+		auth.GET("/refresh", handlers.Refresh)
 	}
 
 	strava := api.Group("/strava")
 	{
-		strava.GET("/athlete")
-		strava.GET("/activities")
+		strava.GET("/athlete", handlers.StravaAthlete)
+		strava.GET("/activities", handlers.StravaActivities)
 	}
 
 	user := api.Group("/user")
 	{
-		user.GET("/athlete")
-		user.GET("/activities")
-		user.DELETE("/logout")
-		user.DELETE("/delete")
+		user.GET("/athlete", handlers.UserAthlete)
+		user.GET("/activities", handlers.UserActivities)
+		user.DELETE("/logout", handlers.Logout)
+		user.DELETE("/delete", handlers.DeleteProfile)
 	}
 
 	return router

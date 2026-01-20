@@ -4,20 +4,29 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func UserAthlete(c *gin.Context) {
+type UserHandler struct {
+	DB *pgxpool.Pool
+}
+
+func NewUserHandler(db *pgxpool.Pool) *UserHandler {
+	return &UserHandler{DB: db}
+}
+
+func (h *UserHandler) UserAthlete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "user athlete"})
 }
 
-func UserActivities(c *gin.Context) {
+func (h *UserHandler) UserActivities(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "user activities"})
 }
 
-func Logout(c *gin.Context) {
+func (h *UserHandler) Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, 0)
 }
 
-func DeleteProfile(c *gin.Context) {
+func (h *UserHandler) DeleteProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, 1)
 }

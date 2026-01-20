@@ -3,17 +3,13 @@ package main
 import (
 	"strava-activity-groups/backend/router"
 
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	router := router.SetupRouter()
+	_ = godotenv.Load()
 
-	router.GET("/hello", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello :)",
-		})
-	})
+	router := router.SetupRouter()
 
 	router.Run()
 }

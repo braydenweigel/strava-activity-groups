@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	ID        string `db:"id" json:"id"`
-	AthleteID string `db:"athleteID" json:"athleteID"`
+	AthleteID string `db:"athlete_id" json:"athleteID"`
 	Firstname string `db:"firstname" json:"firstname"`
 	Lastname  string `db:"lastname" json:"lastname"`
 	Username  string `db:"username" json:"username"`
@@ -15,8 +15,8 @@ type User struct {
 
 type Activity struct {
 	ID          string   `db:"id" json:"id"`
-	ActivityID  string   `db:"activityID" json:"activityID"`
-	AthleteID   string   `db:"athleteID" json:"athleteID"`
+	ActivityID  string   `db:"activity_id" json:"activityID"`
+	AthleteID   string   `db:"athlete_id" json:"athleteID"`
 	Name        string   `db:"name" json:"name"`
 	Distance    *float64 `db:"distance" json:"distance"`
 	MovingTime  *int     `db:"moving_time" json:"moving_time"`

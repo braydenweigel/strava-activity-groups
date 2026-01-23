@@ -37,6 +37,7 @@ func SetupRouter() *gin.Engine {
 	{
 		auth.GET("/login", authHandler.Login)
 		auth.GET("/refresh", authHandler.Refresh)
+		auth.GET("/strava/callback", authHandler.StravaCallback)
 	}
 
 	strava := api.Group("/strava")

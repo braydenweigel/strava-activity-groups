@@ -49,3 +49,31 @@ type RefreshToken struct {
 	CreatedAt time.Time  `db:"created_at" json:"created_at"`
 	RevokedAt *time.Time `db:"revoked_at" json:"revoked_at,omitempty"`
 }
+
+type TokenResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresAt    int64  `json:"expires_at"`
+	Athlete      struct {
+		ID        int64  `json:"id"`
+		Firstname string `json:"firstname"`
+		Lastname  string `json:"lastname"`
+		Username  string
+		Units     string
+	} `json:"athlete"`
+}
+
+type StravaActivity struct {
+	ID              int64     `json:"id"`
+	Name            string    `json:"name"`
+	Distance        *float64  `json:"distance"`
+	MovingTime      *int      `json:"moving_time"`
+	ElapsedTime     *int      `json:"elapsed_time"`
+	TotalElevation  *float64  `json:"total_elevation_gain"`
+	SportType       string    `json:"sport_type"`
+	StartDate       time.Time `json:"start_date"`
+	StartDateLocal  time.Time `json:"start_date_local"`
+	LocationCity    *string   `json:"location_city"`
+	LocationState   *string   `json:"location_state"`
+	LocationCountry *string   `json:"location_country"`
+}

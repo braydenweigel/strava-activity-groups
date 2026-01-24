@@ -2,6 +2,9 @@ package models
 
 import (
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type User struct {
@@ -61,6 +64,11 @@ type TokenResponse struct {
 		Username  string
 		Units     string
 	} `json:"athlete"`
+}
+
+type Claims struct {
+	UserID uuid.UUID `json:"user_id"`
+	jwt.RegisteredClaims
 }
 
 type StravaActivity struct {

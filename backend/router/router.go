@@ -6,6 +6,7 @@ import (
 	"strava-activity-groups/backend/db"
 	"strava-activity-groups/backend/handlers"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,13 @@ func SetupRouter() *gin.Engine {
 	//initialize router
 	router := gin.Default()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type"},
+		AllowCredentials: true,
+	}))
+
 	//setup handlers with db pool
 	authHandler := handlers.NewAuthHandler(pool)
 	stravaHandler := handlers.NewStravaHandler(pool)
@@ -35,8 +43,7 @@ func SetupRouter() *gin.Engine {
 
 	auth := api.Group("/auth")
 	{
-		auth.GET("/login", authHandler.Login)
-		auth.GET("/refresh", authHandler.Refresh)
+		auth.POST("/refresh", authHandler.Refresh)
 		auth.GET("/strava/callback", authHandler.StravaCallback)
 	}
 

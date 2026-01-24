@@ -21,12 +21,32 @@ func NewAuthHandler(db *pgxpool.Pool) *AuthHandler {
 	return &AuthHandler{DB: db}
 }
 
-func (h *AuthHandler) Login(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "login"})
-}
-
 func (h *AuthHandler) Refresh(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "refresh"})
+
+	//get refresh token from cookie
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	//validate refresh token
+	userID, err := db.ValidateRefreshToken(c.Request.Context(), h.DB, refreshToken)
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	//issue new JWT
+	jwtToken, err := db.IssueJWT(userID)
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": jwtToken,
+	})
 }
 
 func (h *AuthHandler) StravaCallback(c *gin.Context) {

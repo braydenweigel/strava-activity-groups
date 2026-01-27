@@ -49,6 +49,20 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 	})
 }
 
+func (h *AuthHandler) Logout(c *gin.Context) {
+	c.SetCookie(
+		"refresh_token",
+		"",
+		-1, // maxAge < 0 deletes the cookie
+		"/",
+		"",
+		true,
+		true,
+	)
+
+	c.Status(http.StatusNoContent)
+}
+
 func (h *AuthHandler) StravaCallback(c *gin.Context) {
 	//check scope param
 	scope := c.Query("scope")

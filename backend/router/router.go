@@ -3,8 +3,10 @@ package router
 import (
 	"context"
 	"log"
+	"os"
 	"strava-activity-groups/backend/db"
 	"strava-activity-groups/backend/handlers"
+	"strava-activity-groups/backend/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -49,16 +51,17 @@ func SetupRouter() *gin.Engine {
 	}
 
 	strava := api.Group("/strava")
+	strava.Use(middleware.AuthMiddleware([]byte(os.Getenv("JWT_SECRET"))))
 	{
 		strava.GET("/athlete", stravaHandler.StravaAthlete)
 		strava.GET("/activities", stravaHandler.StravaActivities)
 	}
 
 	user := api.Group("/user")
+	user.Use(middleware.AuthMiddleware([]byte(os.Getenv("JWT_SECRET"))))
 	{
 		user.GET("/athlete", userHandler.UserAthlete)
 		user.GET("/activities", userHandler.UserActivities)
-		user.DELETE("/logout", userHandler.Logout)
 		user.DELETE("/delete", userHandler.DeleteProfile)
 	}
 

@@ -7,6 +7,7 @@ import { Provider, useDispatch } from "react-redux";
 import { AppDispatch, store } from "@/lib/store/store";
 import { useEffect } from "react";
 import { fetchToken } from "@/lib/store/tokenSlice";
+import { fetchUser } from "@/lib/store/userSlice";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +23,7 @@ function CheckLoginStatus(){
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     dispatch((fetchToken()))
-  })
+  }, [dispatch])
 
   return null
 }

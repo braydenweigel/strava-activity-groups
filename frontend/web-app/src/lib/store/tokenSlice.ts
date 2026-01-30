@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { fetchUser } from "./userSlice"
 
 export interface Token {
     access_token: string
@@ -7,7 +8,7 @@ export interface Token {
 interface TokenState {
     data: Token | null
     loading: boolean
-    error: string | null;
+    error: string | null
 }
 
 const initialState: TokenState = {

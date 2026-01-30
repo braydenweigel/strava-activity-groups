@@ -9,6 +9,7 @@ import (
 	"strava-activity-groups/backend/models"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -103,4 +104,93 @@ func FetchRecentStravaActivities(accessToken string) ([]models.StravaActivity, e
 	}
 
 	return activities, err
+}
+
+func GetActivitiesByAthleteIDPaginated(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	athleteID string,
+	cursorDate *time.Time,
+	cursorID *uuid.UUID,
+	limit int,
+) ([]models.Activity, error) {
+
+	const baseQuery = `
+		SELECT
+			id,
+			activity_id,
+			athlete_id,
+			name,
+			distance,
+			moving_time,
+			elapsed_time,
+			elevation,
+			sport,
+			date,
+			date_local,
+			city,
+			state,
+			country
+		FROM activities
+		WHERE athlete_id = $1
+	`
+
+	var (
+		rows pgx.Rows
+		err  error
+	)
+
+	if cursorDate != nil && cursorID != nil {
+		query := baseQuery + `
+			AND (date, id) < ($2, $3)
+			ORDER BY date DESC, id DESC
+			LIMIT $4
+		`
+		rows, err = db.Query(
+			ctx,
+			query,
+			athleteID,
+			*cursorDate,
+			*cursorID,
+			limit,
+		)
+	} else {
+		query := baseQuery + `
+			ORDER BY date DESC, id DESC
+			LIMIT $2
+		`
+		rows, err = db.Query(ctx, query, athleteID, limit)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	activities := []models.Activity{}
+
+	for rows.Next() {
+		var a models.Activity
+		if err := rows.Scan(
+			&a.ID,
+			&a.ActivityID,
+			&a.AthleteID,
+			&a.Name,
+			&a.Distance,
+			&a.MovingTime,
+			&a.ElapsedTime,
+			&a.Elevation,
+			&a.Sport,
+			&a.Date,
+			&a.DateLocal,
+			&a.City,
+			&a.State,
+			&a.Country,
+		); err != nil {
+			return nil, err
+		}
+		activities = append(activities, a)
+	}
+
+	return activities, rows.Err()
 }

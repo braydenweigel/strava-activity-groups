@@ -1,6 +1,7 @@
 "use client"
 
 import LoginCard from "@/components/lib/login-card";
+import MainContent from "@/components/lib/main-content";
 import { RootState } from "@/lib/store/store";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -12,7 +13,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      {loggedIn ? <div/> : <LoginCard/>}
+      {loggedIn ? <MainContent/> : <LoginCard/>}
     </div>
   );
 }

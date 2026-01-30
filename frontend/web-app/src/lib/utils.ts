@@ -16,8 +16,7 @@ async function Logout(){
     window.location.reload()
 }
 
-export async function fetchGET(endpoint: string, headers: JSON,){
-    const { data: token } = useSelector((state: RootState) => state.token)
+export async function fetchGET(endpoint: string, token: string){
 
     const res = await fetch(endpoint, {
       method: "GET",
@@ -44,7 +43,7 @@ export async function fetchGET(endpoint: string, headers: JSON,){
     })
 }
 
-export async function fetchPOST(endpoint: string, body:JSON, headers: JSON,){
+export async function fetchPOST(endpoint: string, body: JSON, headers: JSON,){
     const { data: token } = useSelector((state: RootState) => state.token)
 
     const res = await fetch(endpoint, {
@@ -72,7 +71,7 @@ export async function fetchPOST(endpoint: string, body:JSON, headers: JSON,){
     })
 }
 
-export async function fetchPUT(endpoint: string, body:JSON, headers: JSON,){
+export async function fetchPUT(endpoint: string, body: JSON, headers: JSON,){
     const { data: token } = useSelector((state: RootState) => state.token)
 
     const res = await fetch(endpoint, {

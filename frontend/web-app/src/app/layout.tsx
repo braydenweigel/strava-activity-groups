@@ -41,7 +41,9 @@ export default function RootLayout({
       >
         <Provider store={store}>
           <CheckLoginStatus/>
-          {children}
+            <main className="min-h-screen mx-auto w-full max-w[90%] lg:max-w-[66%] px-4">
+              {children}
+            </main>
         </Provider>
       </body>
     </html>

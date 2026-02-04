@@ -7,6 +7,7 @@ import { convertDate, convertDistance, convertElevation, convertTime } from "@/l
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ActivityCard from "./activity-card";
 
 export default function MainContent() {
     const dispatch = useDispatch<AppDispatch>()
@@ -39,27 +40,7 @@ export default function MainContent() {
             </Card>
             <h1 className="text-2xl font-bold mb-1">Activities</h1>
             {activities.data.map((activity) => {
-                let distance
-                if (user.units === "mi"){
-                    distance = (activity.distance! * 0.000621371).toFixed(2).toString() + " mi"
-                } else {
-                    distance = (activity.distance! * 0.001).toFixed(2).toString() + " km"
-                }
-                return (
-                <Card key={activity.activityID} className="w-xl mb-3">
-                    <CardHeader>
-                        <CardTitle>{activity.name}</CardTitle>
-                        <CardDescription>{convertDate(activity.date)}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>{activity.sport}</p>
-                        <p>{activity.distance ? convertDistance(user.units, activity.distance) : null}</p>
-                        <p>{activity.moving_time ? "Moving Time: " + convertTime(activity.moving_time) : null}</p>
-                        <p>{activity.elapsed_time ? "Elapsed Time: " + convertTime(activity.elapsed_time) : null}</p>
-                        <p>{activity.elevation ? "Elevation Gain: " + convertElevation(user.units, activity.elevation) : null}</p>
-                    </CardContent>
-                </Card>
-                )
+                return <ActivityCard key={activity.activityID} activity={activity} units={user.units}/>
             })}
 
         </div>

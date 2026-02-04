@@ -78,6 +78,7 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 		cursorID,
 		limit,
 	)
+
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return

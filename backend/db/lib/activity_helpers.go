@@ -33,6 +33,7 @@ func InsertActivities(
 				moving_time,
 				elapsed_time,
 				elevation,
+				average_heartrate,
 				sport,
 				date,
 				date_local,
@@ -40,7 +41,7 @@ func InsertActivities(
 				state,
 				country
 			)
-			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
 			ON CONFLICT (activity_id) DO NOTHING
 			`,
 			a.ID,
@@ -50,6 +51,7 @@ func InsertActivities(
 			a.MovingTime,
 			a.ElapsedTime,
 			a.TotalElevation,
+			a.AverageHeartrate,
 			a.SportType,
 			a.StartDate,
 			a.StartDateLocal,
@@ -125,6 +127,7 @@ func GetActivitiesByAthleteIDPaginated(
 			moving_time,
 			elapsed_time,
 			elevation,
+			average_heartrate,
 			sport,
 			date,
 			date_local,
@@ -180,6 +183,7 @@ func GetActivitiesByAthleteIDPaginated(
 			&a.MovingTime,
 			&a.ElapsedTime,
 			&a.Elevation,
+			&a.AverageHeartrate,
 			&a.Sport,
 			&a.Date,
 			&a.DateLocal,

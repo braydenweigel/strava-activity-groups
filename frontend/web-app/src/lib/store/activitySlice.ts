@@ -11,6 +11,7 @@ export interface Activity {
     moving_time: number | null
     elapsed_time: number | null
     elevation: number | null
+    average_heartrate: number | null
     sport: string
     date: Date
     date_local: Date

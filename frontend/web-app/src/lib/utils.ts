@@ -48,9 +48,7 @@ export function convertTime(time: number){
     fmtDays = ""
   }
 
-  if (hours > 0 && hours < 10){
-    fmtHours = "0" + hours.toString() + ":"
-  } else if (hours > 10){
+  if (hours > 0 ){
     fmtHours = hours.toString() + ":"
   } else {
     fmtHours = ""
@@ -73,9 +71,9 @@ export function convertTime(time: number){
 
 export function convertDistance(units: "mi" | "km", distance: number){
   if (units === "mi"){
-      return (distance * 0.000621371).toFixed(2).toString() + " mi"
+      return (distance * 0.000621371)
   } else {
-      return (distance * 0.001).toFixed(2).toString() + " km"
+      return (distance * 0.001)
   }
 }
 
@@ -85,6 +83,12 @@ export function convertElevation(units: "mi" | "km", elev: number){
   } else {
       return elev.toFixed(0).toString() + " m"
   }
+}
+
+export function calcPace(distance: number, time: number, units: "mi" | "km"){
+  const pace = convertTime(Math.floor(time / convertDistance(units, distance)))
+
+  return pace + "/" + units
 }
 
 export async function Logout(){

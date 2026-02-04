@@ -18,20 +18,21 @@ type User struct {
 }
 
 type Activity struct {
-	ID          string    `db:"id" json:"id"`
-	ActivityID  string    `db:"activity_id" json:"activityID"`
-	AthleteID   string    `db:"athlete_id" json:"athleteID"`
-	Name        string    `db:"name" json:"name"`
-	Distance    *float64  `db:"distance" json:"distance"`
-	MovingTime  *int      `db:"moving_time" json:"moving_time"`
-	ElapsedTime *int      `db:"elapsed_time" json:"elapsed_time"`
-	Elevation   *float64  `db:"elevation" json:"elevation"`
-	Sport       string    `db:"sport" json:"sport"`
-	Date        time.Time `db:"date" json:"date"`
-	DateLocal   time.Time `db:"date_local" json:"date_local"`
-	City        *string   `db:"city" json:"city"`
-	State       *string   `db:"state" json:"state"`
-	Country     *string   `db:"country" json:"country"`
+	ID               string    `db:"id" json:"id"`
+	ActivityID       string    `db:"activity_id" json:"activityID"`
+	AthleteID        string    `db:"athlete_id" json:"athleteID"`
+	Name             string    `db:"name" json:"name"`
+	Distance         *float64  `db:"distance" json:"distance"`
+	MovingTime       *int      `db:"moving_time" json:"moving_time"`
+	ElapsedTime      *int      `db:"elapsed_time" json:"elapsed_time"`
+	Elevation        *float64  `db:"elevation" json:"elevation"`
+	AverageHeartrate *float64  `db:"average_heartrate" json:"average_heartrate"`
+	Sport            string    `db:"sport" json:"sport"`
+	Date             time.Time `db:"date" json:"date"`
+	DateLocal        time.Time `db:"date_local" json:"date_local"`
+	City             *string   `db:"city" json:"city"`
+	State            *string   `db:"state" json:"state"`
+	Country          *string   `db:"country" json:"country"`
 }
 
 type StravaToken struct {
@@ -73,16 +74,17 @@ type Claims struct {
 }
 
 type StravaActivity struct {
-	ID              int64     `json:"id"`
-	Name            string    `json:"name"`
-	Distance        *float64  `json:"distance"`
-	MovingTime      *int      `json:"moving_time"`
-	ElapsedTime     *int      `json:"elapsed_time"`
-	TotalElevation  *float64  `json:"total_elevation_gain"`
-	SportType       string    `json:"sport_type"`
-	StartDate       time.Time `json:"start_date"`
-	StartDateLocal  time.Time `json:"start_date_local"`
-	LocationCity    *string   `json:"location_city"`
-	LocationState   *string   `json:"location_state"`
-	LocationCountry *string   `json:"location_country"`
+	ID               int64     `json:"id"`
+	Name             string    `json:"name"`
+	Distance         *float64  `json:"distance"`
+	MovingTime       *int      `json:"moving_time"`
+	ElapsedTime      *int      `json:"elapsed_time"`
+	TotalElevation   *float64  `json:"total_elevation_gain"`
+	AverageHeartrate *float64  `json:"average_heartrate"`
+	SportType        string    `json:"sport_type"`
+	StartDate        time.Time `json:"start_date"`
+	StartDateLocal   time.Time `json:"start_date_local"`
+	LocationCity     *string   `json:"location_city"`
+	LocationState    *string   `json:"location_state"`
+	LocationCountry  *string   `json:"location_country"`
 }

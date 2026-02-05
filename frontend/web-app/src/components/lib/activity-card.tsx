@@ -43,7 +43,7 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                     <p className="text-2xl">{activity.moving_time && activity.distance ? calcPace(activity.distance, activity.moving_time, units) : null}</p>
                 </div>
                 {expanded ? 
-                    <div className="mr-0 mt-2">
+                    <div className="grid grid-cols-2 mr-0 mt-2">
                         <p className="text-sm">{activity.elapsed_time ? "Elapsed Time: " + convertTime(activity.elapsed_time) : null}</p>
                         <p className="text-sm">{activity.elapsed_time && activity.distance ? "Elapsed Pace: " + calcPace(activity.distance, activity.elapsed_time, units) : null}</p>
                         <p className="text-sm">{activity.elevation ? "Elevation Gain: " + convertElevation(units, activity.elevation) : null}</p>

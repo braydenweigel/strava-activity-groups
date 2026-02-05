@@ -8,6 +8,7 @@ import { AppDispatch, store } from "@/lib/store/store";
 import { useEffect } from "react";
 import { fetchToken } from "@/lib/store/tokenSlice";
 import { fetchUser } from "@/lib/store/userSlice";
+import { Button } from "@/components/ui/button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +42,7 @@ export default function RootLayout({
       >
         <Provider store={store}>
           <CheckLoginStatus/>
-            <main className="min-h-screen mx-auto w-full max-w[90%] lg:max-w-[66%] px-4">
+            <main className="">
               {children}
             </main>
         </Provider>

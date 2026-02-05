@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function LoginCard() {
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm place-self-center">
         <CardHeader>
             <CardTitle>Activity Groups</CardTitle>
             <CardDescription>Powered by Strava</CardDescription>

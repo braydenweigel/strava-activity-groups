@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { Separator } from "../ui/separator"
 
 type ActivityCardProps = {
   activity: Activity
@@ -24,8 +25,8 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
 
 
     return (
-        <Card className="w-xl mb-3">
-            <CardContent className="">
+            <div className="w-xl mb-3">
+                <Separator className="my-2"/>
                 <div className="flex justify-between mb-0">
                     <div className="flex items-center">
                         <p className="mr-2 font-bold text-lg">{activity.name}</p>
@@ -33,7 +34,7 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                     </div>
                     <div className="flex items-center">
                         <Link target="_blank" href={`https://www.strava.com/activities/${activity.activityID}`} className="underline hover:text-[#fc5200] text-sm mr-2">View on Strava</Link>
-                        <button className="-mt-6 -mr-2" onClick={handleClick}>{expanded ? <ChevronUp/> : <ChevronDown/>}</button>
+                        <button className=" -mr-2" onClick={handleClick}>{expanded ? <ChevronUp/> : <ChevronDown/>}</button>
                     </div>
                 </div>
                 <p className="text-muted-foreground mb-2">{convertDate(activity.date)}</p>
@@ -54,7 +55,6 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                 }
 
 
-            </CardContent>
-        </Card>
+            </div>
     )
 }

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActivityCard from "./activity-card";
+import { Separator } from "../ui/separator";
 
 export default function MainContent() {
     const dispatch = useDispatch<AppDispatch>()
@@ -30,15 +31,10 @@ export default function MainContent() {
   
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-1">Profile</h1>
-            <Card className="w-xl mb-3">
-                <CardContent>
-                    <p className="font-bold">{user?.firstname} {user?.lastname}</p>
-                    <p className="text-accent-foreground">{user?.username}</p>
-                    <Link href={`https://www.strava.com/athletes/${user?.athleteID}`} target="_blank" className="underline hover:text-[#fc5200]">View on Strava</Link>
-                </CardContent>
-            </Card>
-            <h1 className="text-2xl font-bold mb-1">Activities</h1>
+            <div className="flex justify-between items-center"> 
+                <h1 className="text-2xl font-bold mb-1">Activities</h1>
+                <Button size="sm">Filter</Button>
+            </div>
             {activities.data.map((activity) => {
                 return <ActivityCard key={activity.activityID} activity={activity} units={user.units}/>
             })}

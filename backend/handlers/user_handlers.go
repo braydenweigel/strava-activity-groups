@@ -84,6 +84,26 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 		return
 	}
 
+	//request more activities from strava if all activities have been sent to frontend
+	if (len(activities) < limit) && (user.AllActivities == false) {
+		//fetch activities from strava
+
+		//re-request activities from db after strava fetch
+		activities, err = db.GetActivitiesByAthleteIDPaginated(
+			c.Request.Context(),
+			h.DB,
+			user.AthleteID,
+			cursorDate,
+			cursorID,
+			limit,
+		)
+
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+	}
+
 	//determine next cursor
 	var nextCursor *gin.H
 	if len(activities) == limit {
@@ -92,11 +112,18 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 			"cursor_date": last.Date.Format(time.RFC3339),
 			"cursor_id":   last.ID,
 		}
-	}
-
-	//request more activities from strava if all activities have been sent to frontend
-	if (len(activities) < limit) && (user.AllActivities == false) {
-
+	} else if len(activities) > 0 { //last activities available
+		last := activities[len(activities)-1]
+		nextCursor = &gin.H{
+			"cursor_date": last.Date.Format(time.RFC3339),
+			"cursor_id":   last.ID,
+		}
+		//update user.allActivities
+	} else {
+		nextCursor = &gin.H{
+			"cursor_date": cursorDate,
+			"cursor_id":   cursorID,
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

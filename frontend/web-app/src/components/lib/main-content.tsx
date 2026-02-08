@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchInitialActivities } from "@/lib/store/activitySlice";
+import { fetchInitialActivities, fetchMoreActivities } from "@/lib/store/activitySlice";
 import { AppDispatch, RootState } from "@/lib/store/store";
 import { fetchUser } from "@/lib/store/userSlice";
 import { convertDate, convertDistance, convertElevation, convertTime } from "@/lib/utils";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActivityCard from "./activity-card";
 import { Separator } from "../ui/separator";
+import { Spinner } from "../ui/spinner";
 
 export default function MainContent() {
     const dispatch = useDispatch<AppDispatch>()
@@ -18,6 +19,10 @@ export default function MainContent() {
     }, [dispatch])
     const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
     const {data: activities, loading: activitiesLoading, error: activitiesError} = useSelector((state: RootState) => state.activities)
+
+    const handleFetch = () => {
+        dispatch(fetchMoreActivities())
+    }
     
 
     if (userLoading || activitiesLoading){
@@ -38,6 +43,9 @@ export default function MainContent() {
             {activities.data.map((activity) => {
                 return <ActivityCard key={activity.activityID} activity={activity} units={user.units}/>
             })}
+            <div className="flex justify-center items-center mb-4">
+                {(activities.allFetched || user.allActivities) ? <p className="text-lg">All Activities Fetched!</p> : <Button className="my-4 " onClick={handleFetch}>Fetch More Activities {activitiesLoading ? <Spinner/> : null}</Button>}
+            </div>
 
         </div>
     );

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	db "strava-activity-groups/backend/db/lib"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -87,6 +88,26 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 	//request more activities from strava if all activities have been sent to frontend
 	if (len(activities) < limit) && (user.AllActivities == false) {
 		//fetch activities from strava
+		token, err := db.EnsureValidStravaAccessToken(c, h.DB, userID)
+		if err != nil {
+			print(err.Error())
+			c.AbortWithStatus(501)
+			return
+		}
+
+		newActivities, err := db.FetchMoreStravaActivities(token, *cursorDate)
+		if err != nil {
+			c.AbortWithStatus(502)
+			return
+		}
+
+		athleteID, err := strconv.ParseInt(user.AthleteID, 10, 64)
+		if err != nil {
+			c.AbortWithStatus(503)
+			return
+		}
+
+		db.InsertActivities(c, h.DB, athleteID, newActivities)
 
 		//re-request activities from db after strava fetch
 		activities, err = db.GetActivitiesByAthleteIDPaginated(
@@ -99,7 +120,7 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 		)
 
 		if err != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.AbortWithStatus(504)
 			return
 		}
 	}
@@ -118,7 +139,7 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 			"cursor_date": last.Date.Format(time.RFC3339),
 			"cursor_id":   last.ID,
 		}
-		//update user.allActivities
+		//update user.allActivities to true
 	} else {
 		nextCursor = &gin.H{
 			"cursor_date": cursorDate,

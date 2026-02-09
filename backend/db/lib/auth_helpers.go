@@ -4,9 +4,15 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"strava-activity-groups/backend/models"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -113,4 +119,121 @@ func IssueJWT(userID uuid.UUID) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+}
+
+func GetStravaToken(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	userID uuid.UUID,
+) (*models.StravaToken, error) {
+
+	const query = `
+		SELECT
+			id,
+			user_id,
+			access_token,
+			refresh_token,
+			expires_at,
+			scope,
+			created_at,
+			updated_at
+		FROM strava_tokens
+		WHERE user_id = $1
+	`
+
+	var token models.StravaToken
+
+	err := db.QueryRow(ctx, query, userID).Scan(
+		&token.ID,
+		&token.UserID,
+		&token.AccessToken,
+		&token.RefreshToken,
+		&token.ExpiresAt,
+		&token.Scope,
+		&token.CreatedAt,
+		&token.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil // no token yet
+		}
+		return nil, err
+	}
+
+	return &token, nil
+}
+
+func RefreshStravaAccessToken(
+	ctx context.Context,
+	refreshToken string,
+) (*models.TokenResponse, error) {
+
+	form := url.Values{
+		"client_id":     {os.Getenv("CLIENT_ID")},
+		"client_secret": {os.Getenv("CLIENT_SECRET")},
+		"grant_type":    {"refresh_token"},
+		"refresh_token": {refreshToken},
+	}
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		"POST",
+		"https://www.strava.com/oauth/token",
+		strings.NewReader(form.Encode()),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("strava refresh failed: %s", body)
+	}
+
+	var tokenRes models.TokenResponse
+	if err := json.NewDecoder(resp.Body).Decode(&tokenRes); err != nil {
+		return nil, err
+	}
+
+	return &tokenRes, nil
+}
+
+func EnsureValidStravaAccessToken(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	userID uuid.UUID,
+) (string, error) {
+
+	token, err := GetStravaToken(ctx, db, userID)
+	if err != nil {
+		return "", err
+	}
+
+	// still valid (give 1 min buffer)
+	if time.Now().Before(token.ExpiresAt.Add(-time.Minute)) {
+		return token.AccessToken, nil
+	}
+
+	// refresh
+	newToken, err := RefreshStravaAccessToken(ctx, token.RefreshToken)
+	if err != nil {
+		return "", err
+	}
+
+	// persist updated token
+	_, err = UpsertStravaTokens(ctx, db, userID, *newToken, token.Scope)
+	if err != nil {
+		return "", err
+	}
+
+	return newToken.AccessToken, nil
 }

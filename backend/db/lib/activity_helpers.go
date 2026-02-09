@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strava-activity-groups/backend/models"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -106,6 +107,47 @@ func FetchRecentStravaActivities(accessToken string) ([]models.StravaActivity, e
 	}
 
 	return activities, err
+}
+
+func FetchMoreStravaActivities(accessToken string, before time.Time) ([]models.StravaActivity, error) {
+	req, err := http.NewRequest(
+		"GET",
+		`https://www.strava.com/api/v3/athlete/activities`,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	q := req.URL.Query()
+	q.Set("before", strconv.FormatInt(before.Unix(), 10))
+	q.Set("per_page", "200")
+
+	req.URL.RawQuery = q.Encode()
+
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+
+	//send request and check for errors
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("strava api error: %s", body)
+	}
+
+	//parse json response
+	var activities []models.StravaActivity
+	if err := json.NewDecoder(resp.Body).Decode(&activities); err != nil {
+		return nil, err
+	}
+
+	return activities, err
+
 }
 
 func GetActivitiesByAthleteIDPaginated(

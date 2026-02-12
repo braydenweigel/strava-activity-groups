@@ -8,7 +8,8 @@ import { Popover, PopoverTrigger } from "../ui/popover";
 import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import DateFilter from "./filters/date-filter";
-import { ActivityFilters, initialFilter } from "./main-content";
+import { ActivityFilters, initialFilter } from "./filters/utils";
+
 
 interface FilterSheetProps {
   filter: ActivityFilters
@@ -17,11 +18,6 @@ interface FilterSheetProps {
 
 
 export default function FilterSheet({filter, setFilter}: FilterSheetProps){
-    const [open, setOpen] = React.useState(false)
-    const [date, setDate] = React.useState<DateRange | undefined>({
-      from: new Date(new Date().getFullYear(), 0, 20),
-      to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),
-    })
 
 
     const clearFilter = () => {

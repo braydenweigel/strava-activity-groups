@@ -9,49 +9,9 @@ import { Spinner } from "../ui/spinner";
 import { Input } from "../ui/input";
 import FilterSheet from "./filter-sheet";
 import React from "react";
+import { ActivityFilters, filterActivities, initialFilter } from "./filters/utils";
+import { DANGEROUSLY_runPendingImmediatesAfterCurrentTask } from "next/dist/server/node-environment-extensions/fast-set-immediate.external";
 
-export interface ActivityFilters {
-    name: string | undefined
-    sport: Set<string>
-    date: {
-        after: Date | undefined
-        before: Date | undefined
-    }
-    time: {
-        type: "moving" | "elapsed"
-        lessThan: number | undefined
-        greaterThan: number | undefined
-    } 
-    pace: {
-        type: "moving" | "elapsed"
-        lessThan: number | undefined
-        greaterThan: number | undefined
-    }
-    distance: {
-        lessThan: number | undefined
-        greaterThan: number | undefined
-    }
-    elevation: {
-        lessThan: number | undefined
-        greaterThan: number | undefined
-    }
-    averageHR: {
-        lessThan: number | undefined
-        greaterThan: number | undefined
-    }
-    
-}
-
-export const initialFilter: ActivityFilters = {
-    name: undefined,
-    sport: new Set(),
-    date: {after: undefined, before: undefined},
-    time: {type: "moving", lessThan: undefined, greaterThan: undefined},
-    pace: {type: "moving", lessThan: undefined, greaterThan: undefined},
-    distance: {lessThan: undefined, greaterThan: undefined},
-    elevation: {lessThan: undefined, greaterThan: undefined},
-    averageHR: {lessThan: undefined, greaterThan: undefined}
-}
 
 export default function MainContent() {
     const dispatch = useDispatch<AppDispatch>()
@@ -76,6 +36,7 @@ export default function MainContent() {
         return null
     }
 
+    const displayActivities = filterActivities(activities.data, filter)
   
     return (
         <div>
@@ -87,7 +48,7 @@ export default function MainContent() {
                 </div>
                 
             </div>
-            {activities.data.map((activity) => {
+            {displayActivities.map((activity) => {
                 return <ActivityCard key={activity.activityID} activity={activity} units={user.units}/>
             })}
             <div className="flex justify-center items-center mb-4">

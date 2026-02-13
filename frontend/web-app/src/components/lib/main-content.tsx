@@ -36,7 +36,7 @@ export default function MainContent() {
         return null
     }
 
-    const displayActivities = filterActivities(activities.data, filter)
+    const displayActivities = filterActivities(activities.data, filter, user.units)
   
     return (
         <div>

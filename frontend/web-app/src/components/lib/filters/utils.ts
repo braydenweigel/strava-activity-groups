@@ -43,12 +43,20 @@ export const initialFilter: ActivityFilters = {
     averageHR: {lessThan: undefined, greaterThan: undefined}
 }
 
-export function filterActivities(activities: Activity[], filters: ActivityFilters){
+export function filterActivities(activities: Activity[], filters: ActivityFilters, units: "mi" | "km"){
     return activities.filter(activity => {
-        const activityDate = new Date(activity.date)
+
         //filter by date
+        const activityDate = new Date(activity.date)
         if (filters.date.after && activityDate <= filters.date.after) return false
         if (filters.date.before && activityDate >= filters.date.before) return false
+
+
+        //filter by distance
+        if (activity.distance){
+            if (filters.distance.greaterThan && filters.distance.greaterThan > (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
+            if (filters.distance.lessThan && filters.distance.lessThan < (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
+        }
 
         return true
     })

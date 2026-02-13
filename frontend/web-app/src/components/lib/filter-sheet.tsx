@@ -9,6 +9,7 @@ import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import DateFilter from "./filters/date-filter";
 import { ActivityFilters, initialFilter } from "./filters/utils";
+import DistanceFilter from "./filters/distance-filter";
 
 
 interface FilterSheetProps {
@@ -52,12 +53,7 @@ export default function FilterSheet({filter, setFilter}: FilterSheetProps){
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="distance">
-                  <AccordionTrigger>Distance</AccordionTrigger>
-                  <AccordionContent>
-
-                  </AccordionContent>
-                </AccordionItem>
+                <DistanceFilter setFilter={setFilter} filter={filter}/>
 
                 <AccordionItem value="pace">
                   <AccordionTrigger>Pace</AccordionTrigger>

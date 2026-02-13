@@ -11,6 +11,7 @@ import DateFilter from "./filters/date-filter";
 import { ActivityFilters, initialFilter } from "./filters/utils";
 import DistanceFilter from "./filters/distance-filter";
 import ElevationFilter from "./filters/elevation-filter";
+import HeartRateFilter from "./filters/hr-filter";
 
 
 interface FilterSheetProps {
@@ -64,13 +65,7 @@ export default function FilterSheet({filter, setFilter}: FilterSheetProps){
                 </AccordionItem>
 
                 <ElevationFilter setFilter={setFilter} filter={filter}/>
-
-                <AccordionItem value="hr">
-                  <AccordionTrigger>Average Heart Rate</AccordionTrigger>
-                  <AccordionContent>
-
-                  </AccordionContent>
-                </AccordionItem>
+                <HeartRateFilter setFilter={setFilter} filter={filter}/>
 
               </Accordion>
 

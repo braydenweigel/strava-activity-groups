@@ -59,12 +59,19 @@ export function filterActivities(activities: Activity[], filters: ActivityFilter
             if (filters.distance.lessThan && filters.distance.lessThan < (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
         }
 
-        //filter by distance
+        //filter by elevation
         if ((filters.elevation.greaterThan || filters.elevation.lessThan) && !activity.elevation) return false
         if (activity.elevation){
             if (filters.elevation.greaterThan && filters.elevation.greaterThan > (units == "mi" ? activity.elevation * 3.28084 : activity.elevation)) return false
             if (filters.elevation.lessThan && filters.elevation.lessThan < (units == "mi" ? activity.elevation * 3.28084 : activity.elevation)) return false
-        } else return false
+        } 
+
+        //filter by average HR
+        if ((filters.averageHR.greaterThan || filters.averageHR.lessThan) && !activity.average_heartrate) return false
+        if (activity.average_heartrate){
+            if (filters.averageHR.greaterThan && filters.averageHR.greaterThan > activity.average_heartrate) return false
+            if (filters.averageHR.lessThan && filters.averageHR.lessThan < activity.average_heartrate) return false
+        }
 
         return true
     })

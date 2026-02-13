@@ -53,10 +53,18 @@ export function filterActivities(activities: Activity[], filters: ActivityFilter
 
 
         //filter by distance
+        if ((filters.distance.greaterThan || filters.distance.lessThan) && !activity.distance) return false //if user uses a distance filter, any activities without a distance attribute should be filtered out
         if (activity.distance){
             if (filters.distance.greaterThan && filters.distance.greaterThan > (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
             if (filters.distance.lessThan && filters.distance.lessThan < (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
         }
+
+        //filter by distance
+        if ((filters.elevation.greaterThan || filters.elevation.lessThan) && !activity.elevation) return false
+        if (activity.elevation){
+            if (filters.elevation.greaterThan && filters.elevation.greaterThan > (units == "mi" ? activity.elevation * 3.28084 : activity.elevation)) return false
+            if (filters.elevation.lessThan && filters.elevation.lessThan < (units == "mi" ? activity.elevation * 3.28084 : activity.elevation)) return false
+        } else return false
 
         return true
     })

@@ -23,7 +23,7 @@ export default function Home() {
         : 
         null 
       }
-      <div className="flex min-h-screen items-center justify-center font-sans">
+      <div className="flex min-h-screen justify-center font-sans">
         {loggedIn ? <MainContent/> : <LoginCard/>}
       </div>
     </div>

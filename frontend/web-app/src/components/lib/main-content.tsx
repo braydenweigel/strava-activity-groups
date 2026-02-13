@@ -40,7 +40,7 @@ export default function MainContent() {
   
     return (
         <div>
-            <div className="flex justify-between items-center"> 
+            <div className="flex justify-between items-center w-xl"> 
                 <h1 className="text-2xl font-bold mb-1">Activities</h1>
                 <div className="flex gap-2">
                     <Input placeholder="Search..."/>

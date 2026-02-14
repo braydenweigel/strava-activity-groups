@@ -15,6 +15,7 @@ import HeartRateFilter from "./filters/hr-filter";
 import SportFilter from "./filters/sport-filter";
 import { ScrollArea } from "../ui/scroll-area";
 import TimeFilter from "./filters/time-filter";
+import PaceFilter from "./filters/pace-filter";
 
 
 interface FilterSheetProps {
@@ -44,21 +45,11 @@ export default function FilterSheet({filter, setFilter}: FilterSheetProps){
                 <Accordion type="multiple" defaultValue={undefined} className="px-2">
                   <SportFilter setFilter={setFilter} filter={filter}/>
                   <DateFilter setFilter={setFilter} filter={filter}/>
-
                   <TimeFilter setFilter={setFilter} filter={filter}/>
-
                   <DistanceFilter setFilter={setFilter} filter={filter}/>
-
-                  <AccordionItem value="pace">
-                    <AccordionTrigger>Pace</AccordionTrigger>
-                    <AccordionContent>
-
-                    </AccordionContent>
-                  </AccordionItem>
-
+                  <PaceFilter setFilter={setFilter} filter={filter}/>
                   <ElevationFilter setFilter={setFilter} filter={filter}/>
                   <HeartRateFilter setFilter={setFilter} filter={filter}/>
-
                 </Accordion>               
               </ScrollArea>
               <SheetFooter>

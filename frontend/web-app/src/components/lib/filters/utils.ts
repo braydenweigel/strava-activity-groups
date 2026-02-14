@@ -84,12 +84,23 @@ export function filterActivities(activities: Activity[], filters: ActivityFilter
 
         }
 
-
         //filter by distance
         if ((filters.distance.greaterThan || filters.distance.lessThan) && !activity.distance) return false //if user uses a distance filter, any activities without a distance attribute should be filtered out
         if (activity.distance){
             if (filters.distance.greaterThan && filters.distance.greaterThan > (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
             if (filters.distance.lessThan && filters.distance.lessThan < (units == "mi" ? activity.distance * 0.000621371 : activity.distance * 0.001)) return false
+        }
+
+        //filter by pace
+        if ((filters.pace.greaterThan || filters.pace.lessThan) && (!activity.moving_time || !activity.distance)) return false
+        if (activity.moving_time && activity.elapsed_time && activity.distance){
+            if (filters.pace.type == "moving"){
+                if (filters.pace.greaterThan && filters.pace.greaterThan > (units == "mi" ? (activity.moving_time / (activity.distance * 0.000621371)) : (activity.moving_time / (activity.distance * 0.001)))) return false
+                if (filters.pace.lessThan && filters.pace.lessThan < (units == "mi" ? (activity.moving_time / (activity.distance * 0.000621371)) : (activity.moving_time / (activity.distance * 0.001)))) return false
+            } else {
+                if (filters.pace.greaterThan && filters.pace.greaterThan > (units == "mi" ? (activity.elapsed_time / (activity.distance * 0.000621371)) : (activity.elapsed_time / (activity.distance * 0.001)))) return false
+                if (filters.pace.lessThan && filters.pace.lessThan < (units == "mi" ? (activity.elapsed_time / (activity.distance * 0.000621371)) : (activity.elapsed_time / (activity.distance * 0.001)))) return false
+            }
         }
 
         //filter by elevation

@@ -13,6 +13,8 @@ import DistanceFilter from "./filters/distance-filter";
 import ElevationFilter from "./filters/elevation-filter";
 import HeartRateFilter from "./filters/hr-filter";
 import SportFilter from "./filters/sport-filter";
+import { ScrollArea } from "../ui/scroll-area";
+import TimeFilter from "./filters/time-filter";
 
 
 interface FilterSheetProps {
@@ -33,37 +35,32 @@ export default function FilterSheet({filter, setFilter}: FilterSheetProps){
             <SheetTrigger asChild>
               <Button variant="outline" size="default" >Filter <SlidersHorizontal/></Button>
             </SheetTrigger>
-            <SheetContent side="left">
+            <SheetContent side="left" className="flex flex-col h-full">
               <SheetHeader className="-mb-6">
                 <SheetTitle>Filter</SheetTitle>
               </SheetHeader>
 
-              <Accordion type="multiple" defaultValue={undefined} className="px-2">
+              <ScrollArea className="flex-1 overflow-hidden">
+                <Accordion type="multiple" defaultValue={undefined} className="px-2">
+                  <SportFilter setFilter={setFilter} filter={filter}/>
+                  <DateFilter setFilter={setFilter} filter={filter}/>
 
-                <SportFilter setFilter={setFilter} filter={filter}/>
-                <DateFilter setFilter={setFilter} filter={filter}/>
+                  <TimeFilter setFilter={setFilter} filter={filter}/>
 
-                <AccordionItem value="time">
-                  <AccordionTrigger>Activity Time</AccordionTrigger>
-                  <AccordionContent>
+                  <DistanceFilter setFilter={setFilter} filter={filter}/>
 
-                  </AccordionContent>
-                </AccordionItem>
+                  <AccordionItem value="pace">
+                    <AccordionTrigger>Pace</AccordionTrigger>
+                    <AccordionContent>
 
-                <DistanceFilter setFilter={setFilter} filter={filter}/>
+                    </AccordionContent>
+                  </AccordionItem>
 
-                <AccordionItem value="pace">
-                  <AccordionTrigger>Pace</AccordionTrigger>
-                  <AccordionContent>
+                  <ElevationFilter setFilter={setFilter} filter={filter}/>
+                  <HeartRateFilter setFilter={setFilter} filter={filter}/>
 
-                  </AccordionContent>
-                </AccordionItem>
-
-                <ElevationFilter setFilter={setFilter} filter={filter}/>
-                <HeartRateFilter setFilter={setFilter} filter={filter}/>
-
-              </Accordion>
-
+                </Accordion>               
+              </ScrollArea>
               <SheetFooter>
                 <Button variant="destructive" size="sm" onClick={clearFilter}>Clear Filters</Button>
               </SheetFooter>

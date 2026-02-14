@@ -36,17 +36,11 @@ export function convertDate(dateString: Date){
 }
 
 export function convertTime(time: number){
-  const days = Math.floor(time / 86400)
-  const hours = Math.floor((time - (days * 86400)) / 3600)
-  const minutes = Math.floor((time - (days * 86400) - (hours * 3600)) / 60)
-  const seconds = time - (days * 86400) - (hours * 3600) - (minutes * 60)
+  const hours = Math.floor(time / 3600)
+  const minutes = Math.floor((time -  (hours * 3600)) / 60)
+  const seconds = time  - (hours * 3600) - (minutes * 60)
 
-  let fmtDays, fmtHours, fmtMinutes, fmtSeconds
-  if (days > 0){
-    fmtDays = days.toString() + ":"
-  } else {
-    fmtDays = ""
-  }
+  let  fmtHours, fmtMinutes, fmtSeconds
 
   if (hours > 0 ){
     fmtHours = hours.toString() + ":"
@@ -66,7 +60,7 @@ export function convertTime(time: number){
     fmtSeconds = seconds.toString()
   }
 
-  return fmtDays + fmtHours + fmtMinutes + fmtSeconds
+  return fmtHours + fmtMinutes + fmtSeconds
 }
 
 export function convertDistance(units: "mi" | "km", distance: number){
@@ -90,6 +84,19 @@ export function calcPace(distance: number, time: number, units: "mi" | "km"){
 
   return pace + "/" + units
 }
+
+export function timeToSeconds(time: string) {
+  const parts = time.split(":").map(Number)
+
+  if (parts.length === 2) {
+    const [m, s] = parts
+    return m * 60 + s
+  }
+
+  const [h, m, s] = parts
+  return h * 3600 + m * 60 + s
+}
+
 
 export async function Logout(){
     await fetch("http://localhost:8080/api/auth/logout", {//clears cookie

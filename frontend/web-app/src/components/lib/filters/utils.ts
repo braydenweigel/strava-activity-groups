@@ -71,6 +71,19 @@ export function filterActivities(activities: Activity[], filters: ActivityFilter
         if (filters.date.after && activityDate <= filters.date.after) return false
         if (filters.date.before && activityDate >= filters.date.before) return false
 
+        //filter by activity time
+        if ((filters.time.greaterThan || filters.time.lessThan) && !activity.moving_time) return false
+        if (activity.moving_time && activity.elapsed_time){
+            if (filters.time.type == "moving"){
+                if (filters.time.greaterThan && filters.time.greaterThan > activity.moving_time) return false
+                if (filters.time.lessThan && filters.time.lessThan < activity.moving_time) return false
+            } else {
+                if (filters.time.greaterThan && filters.time.greaterThan > activity.elapsed_time) return false
+                if (filters.time.lessThan && filters.time.lessThan < activity.elapsed_time) return false
+            }
+
+        }
+
 
         //filter by distance
         if ((filters.distance.greaterThan || filters.distance.lessThan) && !activity.distance) return false //if user uses a distance filter, any activities without a distance attribute should be filtered out

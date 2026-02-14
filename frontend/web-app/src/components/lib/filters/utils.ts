@@ -1,7 +1,7 @@
 import { Activity } from "@/lib/store/activitySlice"
 
 export interface ActivityFilters {
-    name: string | undefined
+    name: string
     sport: Set<string>
     date: {
         after: Date | undefined
@@ -33,7 +33,7 @@ export interface ActivityFilters {
 }
 
 export const initialFilter: ActivityFilters = {
-    name: undefined,
+    name: "",
     sport: new Set<string>(),
     date: {after: undefined, before: undefined},
     time: {type: "moving", lessThan: undefined, greaterThan: undefined},
@@ -53,6 +53,12 @@ export const Sports: string[] = [
 
 export function filterActivities(activities: Activity[], filters: ActivityFilters, units: "mi" | "km"){
     return activities.filter(activity => {
+        //filter by activity name
+        if (filters.name && filters.name.length > 0){//only filter if there is something in input
+            const filterString = filters.name.trim().toLowerCase()
+            const activityName = activity.name.toLowerCase()
+            if (!activityName.includes(filterString)) return false
+        }
 
 
         //filter by sport

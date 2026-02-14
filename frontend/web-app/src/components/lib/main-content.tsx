@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { fetchInitialActivities, fetchMoreActivities } from "@/lib/store/activitySlice";
 import { AppDispatch, RootState } from "@/lib/store/store";
 import { fetchUser } from "@/lib/store/userSlice";
-import { act, useEffect, useState } from "react";
+import { act, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActivityCard from "./activity-card";
 import { Spinner } from "../ui/spinner";
@@ -22,10 +22,16 @@ export default function MainContent() {
     const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
     const {data: activities, loading: activitiesLoading, error: activitiesError} = useSelector((state: RootState) => state.activities)
     const [filter, setFilter] = React.useState<ActivityFilters>(structuredClone(initialFilter))
+    const units = user?.units ?? "mi"
 
     const handleFetch = () => {
         dispatch(fetchMoreActivities())
     }
+
+    const displayActivities = useMemo(() => {
+        if (!user || !activities) return []
+        return filterActivities(activities.data, filter, units)
+    }, [activities.data, filter, units])  
     
 
     if (userLoading || activitiesLoading){
@@ -36,14 +42,21 @@ export default function MainContent() {
         return null
     }
 
-    const displayActivities = filterActivities(activities.data, filter, user.units)
   
     return (
         <div>
             <div className="flex justify-between items-center w-xl"> 
                 <h1 className="text-2xl font-bold mb-1">Activities</h1>
                 <div className="flex gap-2">
-                    <Input placeholder="Search..."/>
+                    <Input placeholder="Search..." value={filter.name}
+                        onChange={(e) => {
+                            const s = e.target.value
+                            setFilter(filter => ({
+                                ...filter,
+                                name: s
+                            }))
+                        }}
+                    />
                     <FilterSheet setFilter={setFilter} filter={filter}/>
                 </div>
                 

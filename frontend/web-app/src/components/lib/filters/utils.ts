@@ -34,7 +34,7 @@ export interface ActivityFilters {
 
 export const initialFilter: ActivityFilters = {
     name: undefined,
-    sport: new Set(),
+    sport: new Set<string>(),
     date: {after: undefined, before: undefined},
     time: {type: "moving", lessThan: undefined, greaterThan: undefined},
     pace: {type: "moving", lessThan: undefined, greaterThan: undefined},
@@ -43,8 +43,22 @@ export const initialFilter: ActivityFilters = {
     averageHR: {lessThan: undefined, greaterThan: undefined}
 }
 
+export const Sports: string[] = [
+    "AlpineSki", "BackcountrySki", "Badminton", "Canoeing", "Crossfit", "EBikeRide", "Elliptical", "EMountainBikeRide", "Golf", "GravelRide", 
+    "Handcycle", "HighIntensityIntervalTraining", "Hike", "IceSkate", "InlineSkate", "Kayaking", "Kitesurf", "MountainBikeRide", "NordicSki", 
+    "Pickleball", "Pilates", "Racquetball", "Ride", "RockClimbing", "RollerSki", "Rowing", "Run", "Sail", "Skateboard", "Snowboard", "Snowshoe", 
+    "Soccer", "Squash", "StairStepper", "StandUpPaddling", "Surfing", "Swim", "TableTennis", "Tennis", "TrailRun", "Velomobile", "VirtualRide", 
+    "VirtualRow", "VirtualRun", "Walk", "WeightTraining", "Wheelchair", "Windsurf", "Workout", "Yoga"
+]
+
 export function filterActivities(activities: Activity[], filters: ActivityFilters, units: "mi" | "km"){
     return activities.filter(activity => {
+
+
+        //filter by sport
+        if (filters.sport.size > 0){//only filter if at least one box is checked
+            if (!filters.sport.has(activity.sport)) return false
+        }
 
         //filter by date
         const activityDate = new Date(activity.date)

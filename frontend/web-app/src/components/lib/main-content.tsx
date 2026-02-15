@@ -20,7 +20,7 @@ export default function MainContent() {
         dispatch((fetchInitialActivities()))
     }, [dispatch])
     const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
-    const {data: activities, loading: activitiesLoading, error: activitiesError} = useSelector((state: RootState) => state.activities)
+    const {data: activities, loading: activitiesLoading, loadingMore: activitiesLoadingMore, error: activitiesError} = useSelector((state: RootState) => state.activities)
     const [filter, setFilter] = React.useState<ActivityFilters>(structuredClone(initialFilter))
     const units = user?.units ?? "mi"
 
@@ -65,7 +65,7 @@ export default function MainContent() {
                 return <ActivityCard key={activity.activityID} activity={activity} units={user.units}/>
             })}
             <div className="flex justify-center items-center mb-4">
-                {(activities.allFetched || user.allActivities) ? <p className="text-lg">All Activities Fetched!</p> : <Button className="my-4 " onClick={handleFetch}>Fetch More Activities {activitiesLoading ? <Spinner/> : null}</Button>}
+                {(activities.allFetched || user.allActivities) ? <p className="text-lg">All Activities Fetched!</p> : <Button className="my-4 " onClick={handleFetch}>Fetch More Activities {activitiesLoadingMore ? <Spinner/> : null}</Button>}
             </div>
 
         </div>

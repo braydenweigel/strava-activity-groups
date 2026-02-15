@@ -34,12 +34,14 @@ export interface ActivitiesResponse {
 interface ActivitiesState {
     data: ActivitiesResponse
     loading: boolean
+    loadingMore: boolean
     error: string | null
 }
 
 const initialState: ActivitiesState = {
     data: {data: [], next_cursor: null, allFetched: false},
     loading: false,
+    loadingMore: false,
     error: null
 }
 
@@ -92,11 +94,11 @@ const activitiesSlice = createSlice({
                 state.error = action.error.message || 'Failed to fetch activities!'
             })
             .addCase(fetchMoreActivities.pending, (state) => {
-                state.loading = true
+                state.loadingMore = true
                 state.error = null
             })
             .addCase(fetchMoreActivities.fulfilled, (state, action) => {
-                state.loading = false
+                state.loadingMore = false
                 state.data.next_cursor = action.payload ? action.payload.next_cursor : null
                 if (action.payload && action.payload.data.length > 0){ 
                     state.data.data.push(...action.payload.data)
@@ -105,7 +107,7 @@ const activitiesSlice = createSlice({
                 }
             })
             .addCase(fetchMoreActivities.rejected, (state, action) => {
-                state.loading = true
+                state.loadingMore = true
                 state.error = action.error.message || 'Failed to fetch more activities!'
             })
     }

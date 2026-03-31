@@ -24,9 +24,6 @@ export default function MainContent() {
     const [filter, setFilter] = React.useState<ActivityFilters>(structuredClone(initialFilter))
     const units = user?.units ?? "mi"
 
-    const handleFetch = () => {
-        dispatch(fetchMoreActivities())
-    }
 
     const displayActivities = useMemo(() => {
         if (!user || !activities) return []
@@ -42,10 +39,14 @@ export default function MainContent() {
         return null
     }
 
+    const handleFetch = () => {
+        dispatch(fetchMoreActivities())
+    }
+
   
     return (
         <div>
-            <div className="flex justify-between items-center w-xl"> 
+            <div className="flex flex-col md:flex-row justify-start md:justify-between md:items-center w-screen md:w-xl px-4 md:px-0"> 
                 <h1 className="text-2xl font-bold mb-1">Activities</h1>
                 <div className="flex gap-2">
                     <Input placeholder="Search..." value={filter.name}

@@ -25,7 +25,7 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
 
 
     return (
-            <div className="w-xl mb-3">
+            <div className="w-screen md:w-xl mb-3 px-4 md:px-0">
                 <Separator className="my-2"/>
                 <div className="flex justify-between mb-0">
                     <div className="flex items-center">
@@ -38,10 +38,10 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                     </div>
                 </div>
                 <p className="text-muted-foreground mb-2">{convertDate(activity.date)}</p>
-                <div className="flex justify-between mr-28">
-                    <p className="text-2xl">{activity.distance ? convertDistance(units, activity.distance).toFixed(2) + " " + units : null}</p>
-                    <p className="text-2xl">{activity.moving_time ? convertTime(activity.moving_time) : null}</p>
-                    <p className="text-2xl">{activity.moving_time && activity.distance ? calcPace(activity.distance, activity.moving_time, units) : null}</p>
+                <div className="flex justify-between md:mr-28">
+                    <p className="md:text-2xl">{activity.distance ? convertDistance(units, activity.distance).toFixed(2) + " " + units : null}</p>
+                    <p className="md:text-2xl">{activity.moving_time ? convertTime(activity.moving_time) : null}</p>
+                    <p className="md:text-2xl">{activity.moving_time && activity.distance ? calcPace(activity.distance, activity.moving_time, units) : null}</p>
                 </div>
                 {expanded ? 
                     <div className="grid grid-cols-2 mr-0 mt-2">

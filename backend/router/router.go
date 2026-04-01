@@ -69,8 +69,8 @@ func SetupRouter() *gin.Engine {
 	tag := api.Group("/tag")
 	tag.Use(middleware.AuthMiddleware([]byte(os.Getenv("JWT_SECRET"))))
 	{
-		tag.GET("/", tagHandler.TagsGet)
-		tag.POST("/", tagHandler.TagCreate)
+		tag.GET("", tagHandler.TagsGet)
+		tag.POST("", tagHandler.TagCreate)
 		tag.PATCH("/:id", tagHandler.TagUpdate)
 		tag.DELETE("/:id", tagHandler.TagDelete)
 	}

@@ -88,3 +88,16 @@ type StravaActivity struct {
 	LocationState    *string   `json:"location_state"`
 	LocationCountry  *string   `json:"location_country"`
 }
+
+type CreateTagRequest struct {
+	UserID  string  `json:"user_id" binding:"required"`
+	TagName string  `json:"tagname" binding:"required"`
+	Parent  *string `json:"parent_id"`
+}
+
+type Tag struct {
+	ID       string  `db:"id" json:"id"`
+	UserID   string  `db:"user_id" json:"user_id"`
+	TagName  string  `db:"tagname" json:"tagname"`
+	ParentID *string `db:"parent_id" json:"parent_id"`
+}

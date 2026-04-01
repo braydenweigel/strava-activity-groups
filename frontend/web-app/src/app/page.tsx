@@ -5,13 +5,14 @@ import MainContent from "@/components/lib/main-content";
 import ProfileDialog from "@/components/lib/profile-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 import { RootState } from "@/lib/store/store";
 import { Logout } from "@/lib/utils";
 import React from "react";
 import { useSelector } from "react-redux";
 
 export default function Home() {
-  const { data } = useSelector((state: RootState) => state.token)
+  const { data, loading } = useSelector((state: RootState) => state.token)
   const loggedIn = Boolean(data)
 
   return (
@@ -24,7 +25,7 @@ export default function Home() {
         null 
       }
       <div className="flex min-h-screen justify-center font-sans">
-        {loggedIn ? <MainContent/> : <LoginCard/>}
+        {loading ? <Spinner/> : (loggedIn ? <MainContent/> : <LoginCard/>)}
       </div>
     </div>
 

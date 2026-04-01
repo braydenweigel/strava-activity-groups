@@ -39,6 +39,7 @@ func SetupRouter() *gin.Engine {
 	authHandler := handlers.NewAuthHandler(pool)
 	stravaHandler := handlers.NewStravaHandler(pool)
 	userHandler := handlers.NewUserHandler(pool)
+	tagHandler := handlers.NewTagHandler(pool)
 
 	//setup routes
 	api := router.Group("/api")
@@ -63,6 +64,15 @@ func SetupRouter() *gin.Engine {
 		user.GET("/athlete", userHandler.UserAthlete)
 		user.GET("/activities", userHandler.UserActivities)
 		user.DELETE("/delete", userHandler.DeleteProfile)
+	}
+
+	tag := api.Group("/tag")
+	tag.Use(middleware.AuthMiddleware([]byte(os.Getenv("JWT_SECRET"))))
+	{
+		tag.GET("/", tagHandler.TagsGet)
+		tag.POST("/", tagHandler.TagCreate)
+		tag.PATCH("/:id", tagHandler.TagUpdate)
+		tag.DELETE("/:id", tagHandler.TagDelete)
 	}
 
 	return router

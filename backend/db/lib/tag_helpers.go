@@ -38,8 +38,6 @@ func InsertTag(
 
 	var tag models.Tag
 
-	log.Println("Inserting with parentID:", parentID)
-
 	err := db.QueryRow(ctx, `
 		INSERT INTO tags (user_id, tagname, parent_id)
 		VALUES ($1, $2, $3)
@@ -101,5 +99,134 @@ func GetTagsByUserID(
 	}
 
 	return tags, rows.Err()
+
+}
+
+func UpdateTagByID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	userID uuid.UUID,
+	tagID string,
+	tagName *string,
+	parentID *string,
+) (*models.Tag, error) {
+	log.Println("Tag ID: ", tagID)
+
+	// 1. Ensure tag exists and belongs to user
+	var existingTag models.Tag
+	err := db.QueryRow(ctx, `
+		SELECT id, user_id, tagname, parent_id
+		FROM tags
+		WHERE id = $1 AND user_id = $2
+	`, tagID, userID).Scan(
+		&existingTag.ID,
+		&existingTag.UserID,
+		&existingTag.TagName,
+		&existingTag.ParentID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("tag not found")
+	}
+
+	// 2. Start building query
+	query := `UPDATE tags SET `
+	args := []interface{}{}
+	argPos := 1
+
+	// 3. Update tag name if provided
+	if tagName != nil {
+		query += fmt.Sprintf("tagname = $%d,", argPos)
+		args = append(args, *tagName)
+		argPos++
+	}
+
+	// 4. Always handle parent (nil = set NULL)
+	if parentID == nil {
+		// explicitly clear parent
+		query += fmt.Sprintf("parent_id = $%d,", argPos)
+		args = append(args, nil)
+		argPos++
+	} else {
+		// prevent self-parent
+		if *parentID == tagID {
+			return nil, fmt.Errorf("tag cannot be its own parent")
+		}
+
+		// validate parent exists and belongs to user
+		var exists bool
+		err := db.QueryRow(ctx, `
+			SELECT EXISTS (
+				SELECT 1 FROM tags
+				WHERE id = $1 AND user_id = $2
+			)
+		`, *parentID, userID).Scan(&exists)
+
+		if err != nil {
+			return nil, err
+		}
+		if !exists {
+			return nil, fmt.Errorf("invalid parent_id")
+		}
+
+		// 🔥 cycle check
+		var createsCycle bool
+		err = db.QueryRow(ctx, `
+			WITH RECURSIVE ancestors AS (
+				SELECT id, parent_id
+				FROM tags
+				WHERE id = $1
+
+				UNION ALL
+
+				SELECT t.id, t.parent_id
+				FROM tags t
+				INNER JOIN ancestors a ON t.id = a.parent_id
+			)
+			SELECT EXISTS (
+				SELECT 1 FROM ancestors WHERE id = $2
+			)
+		`, *parentID, tagID).Scan(&createsCycle)
+
+		if err != nil {
+			return nil, err
+		}
+		if createsCycle {
+			return nil, fmt.Errorf("cannot set parent: would create cycle")
+		}
+
+		query += fmt.Sprintf("parent_id = $%d,", argPos)
+		args = append(args, *parentID)
+		argPos++
+	}
+
+	// 5. Ensure something is being updated
+	if len(args) == 0 {
+		return nil, fmt.Errorf("nothing to update")
+	}
+
+	// 6. Remove trailing comma
+	query = query[:len(query)-1]
+
+	// 7. Add WHERE + RETURNING
+	query += fmt.Sprintf(`
+		WHERE id = $%d
+		RETURNING id, user_id, tagname, parent_id
+	`, argPos)
+
+	args = append(args, tagID)
+
+	// 8. Execute
+	var updated models.Tag
+	err = db.QueryRow(ctx, query, args...).Scan(
+		&updated.ID,
+		&updated.UserID,
+		&updated.TagName,
+		&updated.ParentID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &updated, nil
 
 }

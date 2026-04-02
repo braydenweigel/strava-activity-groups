@@ -109,3 +109,8 @@ type TagWithActivities struct {
 	ParentID   *string  `db:"parent_id" json:"parent_id"`
 	Activities []string `db:"activities" json:"activities"`
 }
+
+type UpdateTagRequest struct {
+	TagName *string `json:"tagname"`
+	Parent  *string `json:"parent_id"`
+}

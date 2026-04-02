@@ -57,8 +57,25 @@ func (h *TagHandler) TagsGet(c *gin.Context) {
 }
 
 func (h *TagHandler) TagUpdate(c *gin.Context) {
-	id := c.Query("id")
-	print(id)
+	tagID := c.Param("id")
+	userID, _ := db.GetUserID(c)
+
+	var req models.UpdateTagRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	tag, err := db.UpdateTagByID(c, h.DB, userID, tagID, req.TagName, req.Parent)
+
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, tag)
+
 }
 
 func (h *TagHandler) TagDelete(c *gin.Context) {

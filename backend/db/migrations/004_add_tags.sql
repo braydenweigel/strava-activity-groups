@@ -8,6 +8,10 @@ CREATE TABLE tags (
 
 CREATE TABLE tag_activities (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tag_id UUID NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     activity_id UUID NOT NULL REFERENCES activities(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_tag_activities_tag_id ON tag_activities(tag_id);
+CREATE INDEX idx_tag_activities_activity_id ON tag_activities(activity_id);

@@ -101,3 +101,11 @@ type Tag struct {
 	TagName  string  `db:"tagname" json:"tagname"`
 	ParentID *string `db:"parent_id" json:"parent_id"`
 }
+
+type TagWithActivities struct {
+	ID         string   `db:"id" json:"id"`
+	UserID     string   `db:"user_id" json:"user_id"`
+	TagName    string   `db:"tagname" json:"tagname"`
+	ParentID   *string  `db:"parent_id" json:"parent_id"`
+	Activities []string `db:"activities" json:"activities"`
+}

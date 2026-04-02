@@ -75,5 +75,12 @@ func SetupRouter() *gin.Engine {
 		tag.DELETE("/:id", tagHandler.TagDelete)
 	}
 
+	tagActivities := tag.Group("/activity")
+	tagActivities.Use(middleware.AuthMiddleware([]byte(os.Getenv("JWT_SECRET"))))
+	{
+		tagActivities.POST("")
+		tagActivities.DELETE("")
+	}
+
 	return router
 }

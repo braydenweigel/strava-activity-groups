@@ -6,6 +6,7 @@ import (
 	"log"
 	"strava-activity-groups/backend/models"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,7 +17,6 @@ func InsertTag(
 	tagName string,
 	parentID *string,
 ) (*models.Tag, error) {
-	print(parentID)
 
 	if parentID != nil {
 		var exists bool
@@ -56,4 +56,50 @@ func InsertTag(
 	}
 
 	return &tag, nil
+}
+
+func GetTagsByUserID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	userID uuid.UUID,
+) ([]models.TagWithActivities, error) {
+	rows, err := db.Query(ctx, `
+		SELECT 
+			t.id,
+			t.user_id,
+			t.tagname,
+			t.parent_id,
+			COALESCE(array_agg(ta.activity_id) FILTER (WHERE ta.activity_id IS NOT NULL), '{}') AS activities
+		FROM tags t
+		LEFT JOIN tag_activities ta ON ta.tag_id = t.id
+		WHERE t.user_id = $1
+		GROUP BY t.id
+		ORDER BY t.tagname
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tags []models.TagWithActivities
+
+	for rows.Next() {
+		var t models.TagWithActivities
+
+		err := rows.Scan(
+			&t.ID,
+			&t.UserID,
+			&t.TagName,
+			&t.ParentID,
+			&t.Activities,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, t)
+	}
+
+	return tags, rows.Err()
+
 }

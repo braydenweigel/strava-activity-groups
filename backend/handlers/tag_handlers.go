@@ -44,7 +44,16 @@ func (h *TagHandler) TagCreate(c *gin.Context) {
 
 func (h *TagHandler) TagsGet(c *gin.Context) {
 	userID, _ := db.GetUserID(c)
-	print(userID.String())
+
+	tags, err := db.GetTagsByUserID(c, h.DB, userID)
+
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, tags)
+
 }
 
 func (h *TagHandler) TagUpdate(c *gin.Context) {

@@ -79,6 +79,15 @@ func (h *TagHandler) TagUpdate(c *gin.Context) {
 }
 
 func (h *TagHandler) TagDelete(c *gin.Context) {
-	id := c.Query("id")
-	print(id)
+	tagID := c.Param("id")
+	userID, _ := db.GetUserID(c)
+
+	err := db.DeleteTagByID(c, h.DB, userID, tagID)
+
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "tag deleted"})
 }

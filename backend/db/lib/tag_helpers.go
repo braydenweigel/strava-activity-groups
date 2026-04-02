@@ -230,3 +230,49 @@ func UpdateTagByID(
 	return &updated, nil
 
 }
+
+func DeleteTagByID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	userID uuid.UUID,
+	tagID string,
+) error {
+	// Ensure tag exists and belongs to user
+	var exists bool
+	err := db.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1 FROM tags
+			WHERE id = $1 AND user_id = $2
+		)
+	`, tagID, userID).Scan(&exists)
+
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return fmt.Errorf("tag not found")
+	}
+
+	// Recursive delete (tag + all descendants)
+	_, err = db.Exec(ctx, `
+		WITH RECURSIVE descendants AS (
+			SELECT id
+			FROM tags
+			WHERE id = $1
+
+			UNION ALL
+
+			SELECT t.id
+			FROM tags t
+			INNER JOIN descendants d ON t.parent_id = d.id
+		)
+		DELETE FROM tags
+		WHERE id IN (SELECT id FROM descendants)
+	`, tagID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

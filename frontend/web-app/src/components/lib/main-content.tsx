@@ -11,6 +11,8 @@ import FilterSheet from "./filter-sheet";
 import React from "react";
 import { ActivityFilters, filterActivities, initialFilter } from "./filters/utils";
 import { DANGEROUSLY_runPendingImmediatesAfterCurrentTask } from "next/dist/server/node-environment-extensions/fast-set-immediate.external";
+import TagsDialog from "./tags-dialog";
+import { fetchTags } from "@/lib/store/tagSlice";
 
 
 export default function MainContent() {
@@ -18,6 +20,7 @@ export default function MainContent() {
     useEffect(() => {
         dispatch((fetchUser()))
         dispatch((fetchInitialActivities()))
+        dispatch((fetchTags()))
     }, [dispatch])
     const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
     const {data: activities, loading: activitiesLoading, loadingMore: activitiesLoadingMore, error: activitiesError} = useSelector((state: RootState) => state.activities)
@@ -58,6 +61,7 @@ export default function MainContent() {
                             }))
                         }}
                     />
+                    <TagsDialog/>
                     <FilterSheet setFilter={setFilter} filter={filter}/>
                 </div>
                 

@@ -116,7 +116,7 @@ export async function fetchGET(endpoint: string, token: string){
       credentials: "include"
     })
 
-    if (res.status !== 401) return res //no errors
+    if (res.status !== 401) return res //no auth error
 
     fetchToken()//get a new token
     const { data: newToken } = useSelector((state: RootState) => state.token)
@@ -141,7 +141,8 @@ export async function fetchPOST(endpoint: string, body: JSON, headers: JSON,){
       headers: {
           Authorization: token ? `Bearer ${token}` : ""
       },
-      credentials: "include"
+      credentials: "include",
+      body: JSON.stringify(body)
     })
 
     if (res.status !== 401) return res //no errors
@@ -157,19 +158,21 @@ export async function fetchPOST(endpoint: string, body: JSON, headers: JSON,){
       headers: {
           Authorization: newToken ? `Bearer ${token}` : ""
       },
-      credentials: "include"
+      credentials: "include",
+      body: JSON.stringify(body)
     })
 }
 
-export async function fetchPUT(endpoint: string, body: JSON, headers: JSON,){
+export async function fetchPATCH(endpoint: string, body: JSON, headers: JSON,){
     const { data: token } = useSelector((state: RootState) => state.token)
 
     const res = await fetch(endpoint, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
           Authorization: token ? `Bearer ${token}` : ""
       },
-      credentials: "include"
+      credentials: "include",
+      body: JSON.stringify(body)
     })
 
     if (res.status !== 401) return res //no errors
@@ -181,11 +184,12 @@ export async function fetchPUT(endpoint: string, body: JSON, headers: JSON,){
     if (!newToken) Logout() 
 
     return await fetch(endpoint, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
           Authorization: newToken ? `Bearer ${token}` : ""
       },
-      credentials: "include"
+      credentials: "include",
+      body: JSON.stringify(body)
     })
 }
 

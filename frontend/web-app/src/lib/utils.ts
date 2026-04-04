@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { twMerge } from "tailwind-merge"
 import { AppDispatch, RootState, store } from "./store/store"
 import { fetchToken } from "./store/tokenSlice"
-import { createTag, Tag } from "./store/tagSlice"
+import { createTag, deleteTag, Tag } from "./store/tagSlice"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -249,5 +249,16 @@ export async function createNewTag(user_id: string, tagname: string, parent_id: 
         dispatch(createTag(newTag))
     } else {
         window.alert("Error Creating Tag!")
+    }
+}
+
+export async function deleteTagWithID(id: string, dispatch: AppDispatch){
+    const res = await fetchDELETE("http://localhost:8080/api/tag/" + id)
+
+    if (res.status == 200){
+
+        dispatch(deleteTag({id: id}))
+    } else {
+        window.alert("Error Deleting Tag!")
     }
 }

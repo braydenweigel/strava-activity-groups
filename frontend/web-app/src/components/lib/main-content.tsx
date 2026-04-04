@@ -10,7 +10,6 @@ import { Input } from "../ui/input";
 import FilterSheet from "./filter-sheet";
 import React from "react";
 import { ActivityFilters, filterActivities, initialFilter } from "./filters/utils";
-import { DANGEROUSLY_runPendingImmediatesAfterCurrentTask } from "next/dist/server/node-environment-extensions/fast-set-immediate.external";
 import TagsDialog from "./tags-dialog";
 import { fetchTags } from "@/lib/store/tagSlice";
 

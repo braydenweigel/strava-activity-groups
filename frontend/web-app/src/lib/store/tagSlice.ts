@@ -46,6 +46,8 @@ const tagsSlice = createSlice({
         createTag: (state, action) => {
             if (!state.data) return 
 
+            
+
             state.data.push(action.payload)
             state.tree = buildTagTree(state.data)
         },
@@ -89,6 +91,7 @@ const tagsSlice = createSlice({
 })
 
 export default tagsSlice.reducer
+export const { createTag, updateTag, deleteTag } = tagsSlice.actions
 
 function buildTagTree(tags: Tag[]){
     const parents = tags.filter(tag => !tag.parent_id)

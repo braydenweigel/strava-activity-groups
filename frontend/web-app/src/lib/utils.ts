@@ -1,8 +1,9 @@
 import { clsx, type ClassValue } from "clsx"
 import { useSelector } from "react-redux"
 import { twMerge } from "tailwind-merge"
-import { RootState } from "./store/store"
+import { AppDispatch, RootState, store } from "./store/store"
 import { fetchToken } from "./store/tokenSlice"
+import { createTag, Tag } from "./store/tagSlice"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -133,13 +134,14 @@ export async function fetchGET(endpoint: string, token: string){
     })
 }
 
-export async function fetchPOST(endpoint: string, body: JSON, headers: JSON,){
-    const { data: token } = useSelector((state: RootState) => state.token)
+export async function fetchPOST(endpoint: string, body: any){
+    const state = store.getState()
+    const token = state.token.data
 
     const res = await fetch(endpoint, {
       method: "POST",
       headers: {
-          Authorization: token ? `Bearer ${token}` : ""
+          Authorization: token ? `Bearer ${token.access_token}` : ""
       },
       credentials: "include",
       body: JSON.stringify(body)
@@ -148,7 +150,7 @@ export async function fetchPOST(endpoint: string, body: JSON, headers: JSON,){
     if (res.status !== 401) return res //no errors
 
     fetchToken()//get a new token
-    const { data: newToken } = useSelector((state: RootState) => state.token)
+    const newToken = state.token.data
 
     //error with refresh_token
     if (!newToken) Logout() 
@@ -156,20 +158,21 @@ export async function fetchPOST(endpoint: string, body: JSON, headers: JSON,){
     return await fetch(endpoint, {
       method: "POST",
       headers: {
-          Authorization: newToken ? `Bearer ${token}` : ""
+          Authorization: newToken ? `Bearer ${newToken.access_token}` : ""
       },
       credentials: "include",
       body: JSON.stringify(body)
     })
 }
 
-export async function fetchPATCH(endpoint: string, body: JSON, headers: JSON,){
-    const { data: token } = useSelector((state: RootState) => state.token)
+export async function fetchPATCH(endpoint: string, body: any){
+    const state = store.getState()
+    const token = state.token.data
 
     const res = await fetch(endpoint, {
       method: "PATCH",
       headers: {
-          Authorization: token ? `Bearer ${token}` : ""
+          Authorization: token ? `Bearer ${token.access_token}` : ""
       },
       credentials: "include",
       body: JSON.stringify(body)
@@ -178,7 +181,7 @@ export async function fetchPATCH(endpoint: string, body: JSON, headers: JSON,){
     if (res.status !== 401) return res //no errors
 
     fetchToken()//get a new token
-    const { data: newToken } = useSelector((state: RootState) => state.token)
+    const newToken = state.token.data
 
     //error with refresh_token
     if (!newToken) Logout() 
@@ -186,20 +189,21 @@ export async function fetchPATCH(endpoint: string, body: JSON, headers: JSON,){
     return await fetch(endpoint, {
       method: "PATCH",
       headers: {
-          Authorization: newToken ? `Bearer ${token}` : ""
+          Authorization: newToken ? `Bearer ${newToken.access_token}` : ""
       },
       credentials: "include",
       body: JSON.stringify(body)
     })
 }
 
-export async function fetchDELETE(endpoint: string, headers: JSON,){
-    const { data: token } = useSelector((state: RootState) => state.token)
+export async function fetchDELETE(endpoint: string){
+    const state = store.getState()
+    const token = state.token.data
 
     const res = await fetch(endpoint, {
       method: "DELETE",
       headers: {
-          Authorization: token ? `Bearer ${token}` : ""
+          Authorization: token ? `Bearer ${token.access_token}` : ""
       },
       credentials: "include"
     })
@@ -207,7 +211,7 @@ export async function fetchDELETE(endpoint: string, headers: JSON,){
     if (res.status !== 401) return res //no errors
 
     fetchToken()//get a new token
-    const { data: newToken } = useSelector((state: RootState) => state.token)
+    const newToken = state.token.data
 
     //error with refresh_token
     if (!newToken) Logout() 
@@ -215,8 +219,35 @@ export async function fetchDELETE(endpoint: string, headers: JSON,){
     return await fetch(endpoint, {
       method: "DELETE",
       headers: {
-          Authorization: newToken ? `Bearer ${token}` : ""
+          Authorization: newToken ? `Bearer ${newToken.access_token}` : ""
       },
       credentials: "include"
     })
+}
+
+export async function createNewTag(user_id: string, tagname: string, parent_id: string | null, dispatch: AppDispatch){
+    const body = {
+      user_id: user_id,
+      tagname: tagname,
+      parent_id: parent_id
+    }
+
+    const res = await fetchPOST("http://localhost:8080/api/tag", body)
+    
+    if (res.status == 200){
+        const tag = await res.json()
+
+        const newTag: Tag = {
+            id: tag.id,
+            user_id: tag.user_id,
+            tagname: tag.tagname,
+            parent_id: tag.parent_id,
+            activities: [],
+            children: []
+        }
+
+        dispatch(createTag(newTag))
+    } else {
+        window.alert("Error Creating Tag!")
+    }
 }

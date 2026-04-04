@@ -15,7 +15,7 @@ type CreateTagDialogProps = {
     tags: Tag[]
 }
 
-type SelectParent = {
+export type SelectParent = {
     value: string
     name: string 
 }

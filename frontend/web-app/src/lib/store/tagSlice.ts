@@ -76,7 +76,28 @@ const tagsSlice = createSlice({
 
             state.data.splice(index, 1)
             state.tree = buildTagTree(state.data)
-        }
+        },
+        createTagActivity: (state, action) => {
+            if (!state.data) return
+
+            const index = state.data.findIndex(tag => tag.id === action.payload.tag_id)
+            if (!index) return
+            
+            state.data[index].activities.push(action.payload)
+            console.log(action.payload)
+            state.tree = buildTagTree(state.data)
+        },
+        deleteTagActivity: (state, action) => {
+            if (!state.data) return
+
+            const i = state.data.findIndex(tag => tag.id === action.payload.tag_id)
+            if (!i) return
+
+            const j = state.data[i].activities.findIndex(a => a.id === action.payload.id)
+            state.data[i].activities.splice(j, 1)
+            console.log(action.payload)
+            state.tree = buildTagTree(state.data)
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -98,7 +119,7 @@ const tagsSlice = createSlice({
 })
 
 export default tagsSlice.reducer
-export const { createTag, updateTag, deleteTag } = tagsSlice.actions
+export const { createTag, updateTag, deleteTag, createTagActivity, deleteTagActivity } = tagsSlice.actions
 
 function buildTagTree(tags: Tag[]){
     const parents = tags.filter(tag => !tag.parent_id)

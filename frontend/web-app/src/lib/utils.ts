@@ -3,7 +3,8 @@ import { useSelector } from "react-redux"
 import { twMerge } from "tailwind-merge"
 import { AppDispatch, RootState, store } from "./store/store"
 import { fetchToken } from "./store/tokenSlice"
-import { createTag, deleteTag, Tag, updateTag } from "./store/tagSlice"
+import { ActivityTag, createTag, createTagActivity, deleteTag, deleteTagActivity, Tag, updateTag } from "./store/tagSlice"
+import { act } from "react"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -284,6 +285,42 @@ export async function updateTagWithID(tag: Tag, tagname: string, parent_id: stri
 
         dispatch(updateTag(newTag))
     } else {
-        window.alert("Error Creating Tag!")
+        window.alert("Error Updating Tag!")
+    }
+}
+
+export async function createNewTagActivity(user_id: string, tag_id: string, activity_id: string, dispatch: AppDispatch){
+    const body = {
+      user_id: user_id,
+      tag_id: tag_id,
+      activity_id: activity_id
+    }
+
+    const res = await fetchPOST("http://localhost:8080/api/tag/activity", body)
+
+    if (res.status == 200){
+        const ta = await res.json()
+
+        const newTagActivity: ActivityTag = {
+          id: ta.id,
+          tag_id: ta.tag_id,
+          user_id: ta.user_id,
+          activity_id: ta.activity_id
+        }
+
+        dispatch(createTagActivity(newTagActivity))
+    } else {
+        window.alert("Error Adding Tag to Activity!")
+    }
+
+}
+
+export async function deleteTagActivityWithID(id: string, tag_id: string, dispatch: AppDispatch){
+  const res = await fetchDELETE("http://localhost:8080/api/tag/activity/" + id)
+
+    if (res.status == 200){
+        dispatch(deleteTagActivity({id: id, tag_id: tag_id}))
+    } else {
+        window.alert("Error Deleting Tag!")
     }
 }

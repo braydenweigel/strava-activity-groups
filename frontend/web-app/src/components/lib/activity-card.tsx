@@ -7,6 +7,10 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { Separator } from "../ui/separator"
 import ActivityTagsDialog from "./activity-tags-dialog";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store/store";
+import { Tag } from "@/lib/store/tagSlice";
+import { Badge } from "../ui/badge";
 
 type ActivityCardProps = {
   activity: Activity
@@ -14,7 +18,15 @@ type ActivityCardProps = {
 }
 
 export default function ActivityCard({ activity, units }: ActivityCardProps){
+    const {data, tree, loading, error} = useSelector((state: RootState) => state.tags)
     const [expanded, setExpanded] = useState(false)
+
+    const activityTags: Tag[] = [] //get this activity's tags    
+    for (const tag of data){
+        if (tag.activities.find(a => a.activity_id === activity.id)){
+            activityTags.push(tag)
+        } 
+    }
 
     const handleClick = () => {
         if (expanded){
@@ -26,7 +38,7 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
 
 
     return (
-            <div className="w-screen md:w-xl mb-3 px-4 md:px-0">
+            <div className="w-screen md:w-xl mb-1 px-4 md:px-0">
                 <Separator className="my-2"/>
                 <div className="flex justify-between mb-0">
                     <div className="flex items-center">
@@ -55,8 +67,11 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                     :
                     null
                 }
-
-
+                <div className="flex mt-1 gap-1">
+                    {activityTags.map((tag) => (
+                        <Badge key={tag.id}>{tag.tagname}</Badge>
+                    ))}
+                </div>
             </div>
     )
 }

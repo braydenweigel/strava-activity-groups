@@ -36,6 +36,7 @@ export default function ActivityTagsDialog({ activity }: ActivityTagsDialogProps
         if (!newTag) return
 
         createNewTagActivity(user?.id ?? "", newTag, activity.id, dispatch)
+        setNewTag(undefined)
     }
 
     return (
@@ -46,7 +47,7 @@ export default function ActivityTagsDialog({ activity }: ActivityTagsDialogProps
                 <Field>
                     <FieldLabel>Add a Tag</FieldLabel>
                     <ButtonGroup>
-                        <Select defaultValue={undefined} onValueChange={(value) => setNewTag(value)}>
+                        <Select value={newTag ?? ""} onValueChange={(value) => setNewTag(value)}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select a tag"/>
                             </SelectTrigger>

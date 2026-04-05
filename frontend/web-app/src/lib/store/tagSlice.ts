@@ -53,8 +53,6 @@ const tagsSlice = createSlice({
         createTag: (state, action) => {
             if (!state.data) return 
 
-            
-
             state.data.push(action.payload)
             state.tree = buildTagTree(state.data)
         },
@@ -62,7 +60,7 @@ const tagsSlice = createSlice({
             if (!state.data) return
 
             const index = state.data.findIndex(tag => tag.id === action.payload.id)
-            if (!index) return
+            if (index === -1) return
 
             state.data[index] = action.payload
             state.tree = buildTagTree(state.data)
@@ -72,7 +70,7 @@ const tagsSlice = createSlice({
             if (!state.data) return
 
             const index = state.data.findIndex(tag => tag.id === action.payload.id)
-            if (!index) return
+            if (index === -1) return
 
             state.data.splice(index, 1)
             state.tree = buildTagTree(state.data)
@@ -81,7 +79,7 @@ const tagsSlice = createSlice({
             if (!state.data) return
 
             const index = state.data.findIndex(tag => tag.id === action.payload.tag_id)
-            if (!index) return
+            if (index === -1) return
             
             state.data[index].activities.push(action.payload)
             console.log(action.payload)
@@ -91,7 +89,7 @@ const tagsSlice = createSlice({
             if (!state.data) return
 
             const i = state.data.findIndex(tag => tag.id === action.payload.tag_id)
-            if (!i) return
+            if (i === -1) return
 
             const j = state.data[i].activities.findIndex(a => a.id === action.payload.id)
             state.data[i].activities.splice(j, 1)

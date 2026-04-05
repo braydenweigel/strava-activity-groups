@@ -7,8 +7,15 @@ export interface Tag {
     user_id: string
     tagname: string
     parent_id: string | null
-    activities: string[]
+    activities: ActivityTag[]
     children: Tag[]
+}
+
+export interface ActivityTag {
+    id: string
+    tag_id: string,
+    user_id: string,
+    activity_id: string
 }
 
 interface TagsState {

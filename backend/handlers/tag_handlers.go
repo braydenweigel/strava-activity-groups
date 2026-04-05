@@ -91,3 +91,41 @@ func (h *TagHandler) TagDelete(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "tag deleted"})
 }
+
+func (h *TagHandler) TagActivityCreate(c *gin.Context) {
+	userID, _ := db.GetUserID(c)
+	var req models.CreateTagActivityRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if userID.String() != req.UserID { //if userID in request body doesn't match the userID from the access token
+		c.JSON(401, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	tagActivity, err := db.InsertTagActivity(c, h.DB, req.TagID, req.UserID, req.ActivityID)
+
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, tagActivity)
+
+}
+
+func (h *TagHandler) TagActivityDelete(c *gin.Context) {
+	tagID := c.Param("id")
+
+	err := db.DeleteTagActivityByID(c, h.DB, tagID)
+
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "tag deleted"})
+}

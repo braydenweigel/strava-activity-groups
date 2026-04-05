@@ -42,6 +42,7 @@ export function CreateTagDialog({tags}: CreateTagDialogProps){
         }
 
         createNewTag(user?.id ?? "", name, parentID, dispatch)
+        setName("")
     }
 
     return (

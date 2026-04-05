@@ -102,15 +102,28 @@ type Tag struct {
 	ParentID *string `db:"parent_id" json:"parent_id"`
 }
 
+type TagActivity struct {
+	ID         string `db:"id" json:"id"`
+	TagID      string `db:"tag_id" json:"tag_id"`
+	UserID     string `db:"user_id" json:"user_id"`
+	ActivityID string `db:"activity_id" json:"activity_id"`
+}
+
 type TagWithActivities struct {
-	ID         string   `db:"id" json:"id"`
-	UserID     string   `db:"user_id" json:"user_id"`
-	TagName    string   `db:"tagname" json:"tagname"`
-	ParentID   *string  `db:"parent_id" json:"parent_id"`
-	Activities []string `db:"activities" json:"activities"`
+	ID         string        `db:"id" json:"id"`
+	UserID     string        `db:"user_id" json:"user_id"`
+	TagName    string        `db:"tagname" json:"tagname"`
+	ParentID   *string       `db:"parent_id" json:"parent_id"`
+	Activities []TagActivity `db:"activities" json:"activities"`
 }
 
 type UpdateTagRequest struct {
 	TagName *string `json:"tagname"`
 	Parent  *string `json:"parent_id"`
+}
+
+type CreateTagActivityRequest struct {
+	UserID     string `json:"user_id" binding:"required"`
+	TagID      string `json:"tag_id" binding:"required"`
+	ActivityID string `json:"activity_id" binding:"required"`
 }

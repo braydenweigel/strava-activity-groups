@@ -6,6 +6,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { Separator } from "../ui/separator"
+import ActivityTagsDialog from "./activity-tags-dialog";
 
 type ActivityCardProps = {
   activity: Activity
@@ -31,6 +32,7 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                     <div className="flex items-center">
                         <p className="mr-2 font-bold text-lg">{activity.name}</p>
                         <p className="text-muted-foreground font-medium">{activity.sport}</p>
+                        <ActivityTagsDialog activity={activity}/>
                     </div>
                     <div className="flex items-center">
                         <Link target="_blank" href={`https://www.strava.com/activities/${activity.activityID}`} className="underline hover:text-[#fc5200] text-sm mr-2">View on Strava</Link>

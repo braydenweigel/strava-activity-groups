@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strava-activity-groups/backend/models"
@@ -67,11 +68,21 @@ func GetTagsByUserID(
 			t.user_id,
 			t.tagname,
 			t.parent_id,
-			COALESCE(array_agg(ta.activity_id) FILTER (WHERE ta.activity_id IS NOT NULL), '{}') AS activities
-		FROM tags t
-		LEFT JOIN tag_activities ta ON ta.tag_id = t.id
+			COALESCE(
+				json_agg(
+					json_build_object(
+						'id', ta.id,
+						'tag_id', ta.tag_id,
+						'user_id', ta.user_id,
+						'activity_id', ta.activity_id
+					)
+				) FILTER (WHERE ta.id IS NOT NULL),
+				'[]'
+			) AS activities
+		FROM tags AS t
+		LEFT JOIN tag_activities AS ta ON ta.tag_id = t.id
 		WHERE t.user_id = $1
-		GROUP BY t.id
+		GROUP BY t.id, t.user_id, t.tagname, t.parent_id
 		ORDER BY t.tagname
 	`, userID)
 	if err != nil {
@@ -83,15 +94,20 @@ func GetTagsByUserID(
 
 	for rows.Next() {
 		var t models.TagWithActivities
+		var activitiesJSON []byte
 
 		err := rows.Scan(
 			&t.ID,
 			&t.UserID,
 			&t.TagName,
 			&t.ParentID,
-			&t.Activities,
+			&activitiesJSON,
 		)
 		if err != nil {
+			return nil, err
+		}
+
+		if err := json.Unmarshal(activitiesJSON, &t.Activities); err != nil {
 			return nil, err
 		}
 
@@ -272,6 +288,55 @@ func DeleteTagByID(
 
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func InsertTagActivity(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	tagID string,
+	userID string,
+	activityID string,
+) (*models.TagActivity, error) {
+	var ta models.TagActivity
+
+	err := db.QueryRow(ctx, `
+		INSERT INTO tag_activities (tag_id, user_id, activity_id)
+		VALUES ($1, $2, $3)
+		RETURNING id, tag_id, user_id, activity_id
+	`, tagID, userID, activityID).Scan(
+		&ta.ID,
+		&ta.TagID,
+		&ta.UserID,
+		&ta.ActivityID,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &ta, nil
+}
+
+func DeleteTagActivityByID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	id string,
+) error {
+
+	cmdTag, err := db.Exec(ctx, `
+		DELETE FROM tag_activities
+		WHERE id = $1
+	`, id)
+
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("tag_activity not found")
 	}
 
 	return nil

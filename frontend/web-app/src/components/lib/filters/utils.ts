@@ -1,4 +1,5 @@
 import { Activity } from "@/lib/store/activitySlice"
+import { Tag } from "@/lib/store/tagSlice"
 
 export interface ActivityFilters {
     name: string
@@ -29,6 +30,7 @@ export interface ActivityFilters {
         lessThan: number | undefined
         greaterThan: number | undefined
     }
+    tags: Tag[]
     
 }
 
@@ -40,7 +42,8 @@ export const initialFilter: ActivityFilters = {
     pace: {type: "moving", lessThan: undefined, greaterThan: undefined},
     distance: {lessThan: undefined, greaterThan: undefined},
     elevation: {lessThan: undefined, greaterThan: undefined},
-    averageHR: {lessThan: undefined, greaterThan: undefined}
+    averageHR: {lessThan: undefined, greaterThan: undefined},
+    tags: []
 }
 
 export const Sports: string[] = [
@@ -52,12 +55,25 @@ export const Sports: string[] = [
 ]
 
 export function filterActivities(activities: Activity[], filters: ActivityFilters, units: "mi" | "km"){
+    const taggedActivities = new Set()
+    for (const tag of filters.tags){
+        for (const activity of tag.activities){
+            taggedActivities.add(activity.activity_id)
+        }
+    }
+
+
     return activities.filter(activity => {
         //filter by activity name
         if (filters.name && filters.name.length > 0){//only filter if there is something in input
             const filterString = filters.name.trim().toLowerCase()
             const activityName = activity.name.toLowerCase()
             if (!activityName.includes(filterString)) return false
+        }
+
+        //filter by tags
+        if (filters.tags.length > 0){
+            if (!taggedActivities.has(activity.id)) return false
         }
 
 

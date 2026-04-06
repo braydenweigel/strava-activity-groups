@@ -16,6 +16,7 @@ import SportFilter from "./filters/sport-filter";
 import { ScrollArea } from "../ui/scroll-area";
 import TimeFilter from "./filters/time-filter";
 import PaceFilter from "./filters/pace-filter";
+import TagFilter from "./filters/tag-filter";
 
 
 interface FilterSheetProps {
@@ -43,6 +44,7 @@ export default function FilterSheet({filter, setFilter}: FilterSheetProps){
 
               <ScrollArea className="flex-1 overflow-hidden">
                 <Accordion type="multiple" defaultValue={undefined} className="px-2">
+                  <TagFilter setFilter={setFilter} filter={filter}/>
                   <SportFilter setFilter={setFilter} filter={filter}/>
                   <DateFilter setFilter={setFilter} filter={filter}/>
                   <TimeFilter setFilter={setFilter} filter={filter}/>

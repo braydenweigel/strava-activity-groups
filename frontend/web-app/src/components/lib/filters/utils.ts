@@ -54,6 +54,18 @@ export const Sports: string[] = [
     "VirtualRow", "VirtualRun", "Walk", "WeightTraining", "Wheelchair", "Windsurf", "Workout", "Yoga"
 ]
 
+export function formatSport(sport: string): string {
+  return sport
+    // Handle acronym + word (EBike → E-Bike)
+    .replace(/^([A-Z])([A-Z][a-z])/g, "$1-$2")
+
+    // Split normal PascalCase (VirtualRun → Virtual Run)
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+
+    // Optional: handle long acronyms like HIITWorkout → HIIT Workout
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+}
+
 export function filterActivities(activities: Activity[], filters: ActivityFilters, units: "mi" | "km"){
     const taggedActivities = new Set()
     for (const tag of filters.tags){

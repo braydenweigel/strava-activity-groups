@@ -2,7 +2,7 @@ import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import React from "react";
-import { ActivityFilters, Sports } from "./utils";
+import { ActivityFilters, formatSport, Sports } from "./utils";
 import { Badge } from "@/components/ui/badge";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
@@ -57,7 +57,7 @@ export default function SportFilter({filter, setFilter}: FilterSheetProps){
                                         }
                                     }}
                                 />
-                                <FieldLabel htmlFor={sport} className="">{sport}</FieldLabel>
+                                <FieldLabel htmlFor={sport} className="">{formatSport(sport)}</FieldLabel>
                             </Field>
                         )
                     })}

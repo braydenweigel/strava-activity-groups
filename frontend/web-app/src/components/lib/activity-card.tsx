@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import { Tag } from "@/lib/store/tagSlice";
 import { Badge } from "../ui/badge";
+import { formatSport } from "./filters/utils";
 
 type ActivityCardProps = {
   activity: Activity
@@ -43,7 +44,7 @@ export default function ActivityCard({ activity, units }: ActivityCardProps){
                 <div className="flex justify-between mb-0">
                     <div className="flex items-center">
                         <p className="mr-2 font-bold text-lg">{activity.name}</p>
-                        <p className="text-muted-foreground font-medium">{activity.sport}</p>
+                        <p className="text-muted-foreground font-medium">{formatSport(activity.sport)}</p>
                         <ActivityTagsDialog activity={activity}/>
                     </div>
                     <div className="flex items-center">

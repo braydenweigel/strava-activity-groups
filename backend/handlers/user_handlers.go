@@ -155,5 +155,35 @@ func (h *UserHandler) UserActivities(c *gin.Context) {
 }
 
 func (h *UserHandler) DeleteProfile(c *gin.Context) {
-	c.JSON(http.StatusOK, 1)
+	id, _ := db.GetUserID(c)
+
+	user, errUser := db.GetUserByID(c, h.DB, id)
+	if errUser != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	errDelete := db.DeleteUserByID(c, h.DB, id)
+	if errDelete != nil {
+		c.JSON(400, gin.H{"error": errDelete.Error()})
+		return
+	}
+
+	errActivities := db.DeleteActivitiesByAthleteID(c, h.DB, user.AthleteID)
+	if errActivities != nil {
+		c.JSON(400, gin.H{"error": errActivities.Error()})
+		return
+	}
+
+	c.SetCookie(
+		"refresh_token",
+		"",
+		-1, // maxAge < 0 deletes the cookie
+		"/",
+		"",
+		true,
+		true,
+	)
+
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted"})
 }

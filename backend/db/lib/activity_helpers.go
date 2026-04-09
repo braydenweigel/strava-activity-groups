@@ -240,3 +240,21 @@ func GetActivitiesByAthleteIDPaginated(
 
 	return activities, rows.Err()
 }
+
+func DeleteActivitiesByAthleteID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	athleteID string,
+) error {
+
+	_, err := db.Exec(ctx, `
+		DELETE FROM activities
+		WHERE athlete_id = $1
+	`, athleteID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

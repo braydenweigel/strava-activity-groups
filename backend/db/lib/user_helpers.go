@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strava-activity-groups/backend/models"
 
 	"github.com/gin-gonic/gin"
@@ -128,4 +129,25 @@ func GetUserByID(
 	}
 
 	return &user, nil
+}
+
+func DeleteUserByID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	userID uuid.UUID,
+) error {
+	cmdTag, err := db.Exec(ctx, `
+		DELETE FROM users
+		WHERE id = $1
+	`, userID)
+
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("user not found")
+	}
+
+	return nil
 }

@@ -108,6 +108,20 @@ export async function Logout(){
     window.location.reload()
 }
 
+export async function DeleteProfile(){
+    const state = store.getState()
+    const token = state.token.data
+
+    await fetch("http://localhost:8080/api/user/delete", {
+      method: "DELETE",
+      headers: {
+        Authorization: token ? `Bearer ${token.access_token}` : ""
+      },
+      credentials: "include",
+    })
+    window.location.reload()
+}
+
 export async function fetchGET(endpoint: string, token: string){
 
     const res = await fetch(endpoint, {

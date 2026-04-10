@@ -64,10 +64,11 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 }
 
 func (h *AuthHandler) StravaCallback(c *gin.Context) {
+	URL := os.Getenv("FRONTEND_WEB_URL")
 	//check scope param
 	scope := c.Query("scope")
 	if scope != "read,activity:read_all" {
-		c.Redirect(http.StatusFound, "http://localhost:3000?error=invalid_scope") //link will be different for mobile
+		c.Redirect(http.StatusFound, URL+"?error=invalid_scope") //link will be different for mobile
 	}
 
 	code := c.Query("code")
@@ -84,12 +85,12 @@ func (h *AuthHandler) StravaCallback(c *gin.Context) {
 		},
 	)
 	if err != nil {
-		c.Redirect(http.StatusFound, "http://localhost:3000?error=failed_token_error")
+		c.Redirect(http.StatusFound, URL+"?error=failed_token_error")
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		c.Redirect(http.StatusFound, "http://localhost:3000?error=failed_token_status")
+		c.Redirect(http.StatusFound, URL+"?error=failed_token_status")
 	}
 
 	var tokenRes models.TokenResponse
@@ -97,7 +98,7 @@ func (h *AuthHandler) StravaCallback(c *gin.Context) {
 	tokenRes.Athlete.Units = "mi"
 
 	if err := json.NewDecoder(res.Body).Decode(&tokenRes); err != nil {
-		c.Redirect(http.StatusFound, "http://localhost:3000?error=failed_decode")
+		c.Redirect(http.StatusFound, URL+"?error=failed_decode")
 	}
 
 	//check if user exists already
@@ -107,14 +108,14 @@ func (h *AuthHandler) StravaCallback(c *gin.Context) {
 	if userID == uuid.Nil {
 		userID, err = db.CreateUserByAthleteID(c, h.DB, tokenRes)
 		if userID == uuid.Nil {
-			c.Redirect(http.StatusFound, "http://localhost:3000?error=failed_user_creation")
+			c.Redirect(http.StatusFound, URL+"?error=failed_user_creation")
 		}
 	}
 
 	//create or update strava_tokens row
 	accessToken, err := db.UpsertStravaTokens(c, h.DB, userID, tokenRes, scope)
 	if err != nil {
-		c.Redirect(http.StatusFound, "http://localhost:3000?error=failed_token_insert")
+		c.Redirect(http.StatusFound, URL+"?error=failed_token_insert")
 	}
 
 	//request activities to add to DB. Activities already present should not be inserted
@@ -124,7 +125,7 @@ func (h *AuthHandler) StravaCallback(c *gin.Context) {
 	//create new refresh_tokens
 	refreshToken, err := db.GetOrCreateRefreshToken(c, h.DB, userID)
 	if err != nil {
-		c.Redirect(http.StatusFound, "http://localhost:3000?error="+err.Error())
+		c.Redirect(http.StatusFound, URL+"?error="+err.Error())
 	}
 
 	//send back redirect link and refresh token hash in secure cookies
@@ -138,5 +139,5 @@ func (h *AuthHandler) StravaCallback(c *gin.Context) {
 		true, // httpOnly
 	)
 
-	c.Redirect(http.StatusFound, "http://localhost:3000?login=success")
+	c.Redirect(http.StatusFound, URL+"?login=success")
 }

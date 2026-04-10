@@ -35,8 +35,9 @@ const initialState: TagsState = {
 export const fetchTags = createAsyncThunk<Tag[] | null, void, {state: RootState}>('tags/fetchTags', async (_, { getState }) => {
     const state = getState()
     const token = state.token.data
+    const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
 
-    const res = await fetchGET("http://localhost:8080/api/tag", token?.access_token ?? "")
+    const res = await fetchGET(URL + "/api/tag", token?.access_token ?? "")
 
     if (!res.ok){
         return null

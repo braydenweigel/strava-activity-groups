@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from "next/link";
 
 export default function LoginCard() {
+  const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
+
   return (
     <Card className="w-full max-w-sm place-self-center">
         <CardHeader>
@@ -11,7 +13,7 @@ export default function LoginCard() {
         </CardHeader>
         <CardContent></CardContent>
         <CardFooter>
-            <Link href="https://www.strava.com/oauth/authorize?client_id=196961&redirect_uri=http://localhost:8080/api/auth/strava/callback&response_type=code&approval_prompt=force&scope=read,activity:read_all&state=web" className="w-full">
+            <Link href={"https://www.strava.com/oauth/authorize?client_id=196961&redirect_uri=" + URL + "/api/auth/strava/callback&response_type=code&approval_prompt=force&scope=read,activity:read_all&state=web"} className="w-full">
               <Button className="w-full bg-[#fc5200] hover:bg-[#e64c00]">Connect with Strava</Button>
             </Link>
         </CardFooter>

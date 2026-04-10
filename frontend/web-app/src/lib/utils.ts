@@ -6,6 +6,8 @@ import { fetchToken } from "./store/tokenSlice"
 import { ActivityTag, createTag, createTagActivity, deleteTag, deleteTagActivity, Tag, updateTag } from "./store/tagSlice"
 import { act } from "react"
 
+const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -101,7 +103,7 @@ export function timeToSeconds(time: string) {
 
 
 export async function Logout(){
-    await fetch("http://localhost:8080/api/auth/logout", {//clears cookie
+    await fetch(URL + "/api/auth/logout", {//clears cookie
           method: "POST",
           credentials: "include",
     })
@@ -112,7 +114,7 @@ export async function DeleteProfile(){
     const state = store.getState()
     const token = state.token.data
 
-    await fetch("http://localhost:8080/api/user/delete", {
+    await fetch(URL + "/api/user/delete", {
       method: "DELETE",
       headers: {
         Authorization: token ? `Bearer ${token.access_token}` : ""
@@ -247,7 +249,7 @@ export async function createNewTag(user_id: string, tagname: string, parent_id: 
       parent_id: parent_id
     }
 
-    const res = await fetchPOST("http://localhost:8080/api/tag", body)
+    const res = await fetchPOST(URL + "/api/tag", body)
     
     if (res.status == 200){
         const tag = await res.json()
@@ -268,7 +270,7 @@ export async function createNewTag(user_id: string, tagname: string, parent_id: 
 }
 
 export async function deleteTagWithID(id: string, dispatch: AppDispatch){
-    const res = await fetchDELETE("http://localhost:8080/api/tag/" + id)
+    const res = await fetchDELETE(URL + "/api/tag/" + id)
 
     if (res.status == 200){
         dispatch(deleteTag({id: id}))
@@ -283,7 +285,7 @@ export async function updateTagWithID(tag: Tag, tagname: string, parent_id: stri
       parent_id: parent_id
     }
 
-    const res = await fetchPATCH("http://localhost:8080/api/tag/" + tag.id, body)
+    const res = await fetchPATCH(URL + "/api/tag/" + tag.id, body)
 
     if (res.status == 200){
         const t = await res.json()
@@ -310,7 +312,7 @@ export async function createNewTagActivity(user_id: string, tag_id: string, acti
       activity_id: activity_id
     }
 
-    const res = await fetchPOST("http://localhost:8080/api/tag/activity", body)
+    const res = await fetchPOST(URL + "/api/tag/activity", body)
 
     if (res.status == 200){
         const ta = await res.json()
@@ -330,7 +332,7 @@ export async function createNewTagActivity(user_id: string, tag_id: string, acti
 }
 
 export async function deleteTagActivityWithID(id: string, tag_id: string, dispatch: AppDispatch){
-  const res = await fetchDELETE("http://localhost:8080/api/tag/activity/" + id)
+  const res = await fetchDELETE(URL + "/api/tag/activity/" + id)
 
     if (res.status == 200){
         dispatch(deleteTagActivity({id: id, tag_id: tag_id}))

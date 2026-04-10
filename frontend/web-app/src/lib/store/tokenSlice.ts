@@ -18,7 +18,8 @@ const initialState: TokenState = {
 }
 
 export const fetchToken = createAsyncThunk('token/fetchToken', async () => {
-    const res = await fetch("http://localhost:8080/api/auth/refresh", {
+    const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
+    const res = await fetch(URL + "/api/auth/refresh", {
         method: "POST",
         credentials: "include"
     })

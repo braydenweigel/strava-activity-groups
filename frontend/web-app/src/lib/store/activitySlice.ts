@@ -48,8 +48,9 @@ const initialState: ActivitiesState = {
 export const fetchInitialActivities = createAsyncThunk<ActivitiesResponse | null, void, {state: RootState}>('user/fetchInitialActivities', async (_, { getState }) => {
     const state = getState()
     const token = state.token.data
+    const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
 
-    const res = await fetchGET("http://localhost:8080/api/user/activities", token?.access_token ?? "")
+    const res = await fetchGET(URL + "/api/user/activities", token?.access_token ?? "")
 
     if (!res.ok){
         return null
@@ -64,8 +65,9 @@ export const fetchMoreActivities = createAsyncThunk<ActivitiesResponse | null, v
     const token = state.token.data
     const cursorDate = state.activities.data?.next_cursor ? state.activities.data.next_cursor.cursor_date : ""
     const cursorID = state.activities.data?.next_cursor ? state.activities.data.next_cursor.cursor_id : ""
+    const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
 
-    const res = await fetchGET(`http://localhost:8080/api/user/activities?cursor_date=${cursorDate}&cursor_id=${cursorID}`, token?.access_token ?? "")
+    const res = await fetchGET(`${URL}/api/user/activities?cursor_date=${cursorDate}&cursor_id=${cursorID}`, token?.access_token ?? "")
 
     if (!res.ok){
         return null

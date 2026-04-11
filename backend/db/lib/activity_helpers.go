@@ -258,3 +258,26 @@ func DeleteActivitiesByAthleteID(
 
 	return nil
 }
+
+func DeleteActivityByActivityID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	activityID string,
+	athleteID string,
+) error {
+
+	cmdTag, err := db.Exec(ctx, `
+		DELETE FROM activities
+		WHERE activity_id = $1 AND athlete_id = $2
+	`, activityID, athleteID)
+
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("activity not found or not authorized")
+	}
+
+	return nil
+}

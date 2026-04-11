@@ -37,6 +37,22 @@ func (h *StravaHandler) StravaWebhooks(c *gin.Context) {
 	if req.AspectType == "create" && req.ObjectType == "activity" {
 
 	} else if req.AspectType == "update" && req.ObjectType == "activity" {
+		var name *string
+		var sport *string
+
+		if req.Updates != nil {
+			name = req.Updates.Title
+			sport = req.Updates.Type
+		}
+
+		err := db.UpdateActivityByActivityID(c, h.DB, strconv.FormatInt(req.ObjectID, 10), strconv.FormatInt(req.OwnerID, 10), name, sport)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "error updating activity"})
+			return
+		}
+
+		c.Status(http.StatusOK)
+		return
 
 	} else if req.AspectType == "delete" && req.ObjectType == "activity" {
 		err := db.DeleteActivityByActivityID(c, h.DB, strconv.Itoa(int(req.ObjectID)), strconv.Itoa(int(req.OwnerID)))

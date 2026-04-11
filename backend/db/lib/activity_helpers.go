@@ -281,3 +281,54 @@ func DeleteActivityByActivityID(
 
 	return nil
 }
+
+func UpdateActivityByActivityID(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	activityID string,
+	athleteID string,
+	name *string,
+	sport *string,
+) error {
+
+	// Nothing to update
+	if name == nil && sport == nil {
+		return nil
+	}
+
+	query := "UPDATE activities SET "
+	args := []interface{}{}
+	argPos := 1
+
+	if name != nil {
+		query += fmt.Sprintf("name = $%d,", argPos)
+		args = append(args, *name)
+		argPos++
+	}
+
+	if sport != nil {
+		query += fmt.Sprintf("sport = $%d,", argPos)
+		args = append(args, *sport)
+		argPos++
+	}
+
+	// remove trailing comma
+	query = query[:len(query)-1]
+
+	query += fmt.Sprintf(" WHERE activity_id = $%d AND athlete_id = $%d",
+		argPos, argPos+1,
+	)
+
+	args = append(args, activityID, athleteID)
+
+	cmdTag, err := db.Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("activity not found or not authorized")
+	}
+
+	return nil
+}

@@ -52,10 +52,9 @@ func SetupRouter() *gin.Engine {
 	}
 
 	strava := api.Group("/strava")
-	strava.Use(middleware.AuthMiddleware([]byte(os.Getenv("JWT_SECRET"))))
 	{
-		strava.GET("/athlete", stravaHandler.StravaAthlete)
-		strava.GET("/activities", stravaHandler.StravaActivities)
+		strava.POST("/webhooks", stravaHandler.StravaWebhooks)
+		strava.GET("/webhooks", stravaHandler.StravaWebhooksVerify)
 	}
 
 	user := api.Group("/user")

@@ -127,3 +127,20 @@ type CreateTagActivityRequest struct {
 	TagID      string `json:"tag_id" binding:"required"`
 	ActivityID string `json:"activity_id" binding:"required"`
 }
+
+type StravaWebhookRequest struct {
+	ObjectType     string                `json:"object_type" binding:"required"`
+	ObjectID       int64                 `json:"object_id" binding:"required"`
+	AspectType     string                `json:"aspect_type" binding:"required"`
+	Updates        *StravaWebhookUpdates `json:"updates"`
+	OwnerID        int64                 `json:"owner_id" binding:"required"`
+	SubscriptionID int                   `json:"subscription_id" binding:"required"`
+	EventTime      int64                 `json:"event_time" binding:"required"`
+}
+
+type StravaWebhookUpdates struct {
+	Title      *string `json:"title"`
+	Type       *string `json:"type"`
+	Private    *string `json:"private"`
+	Authorized *string `json:"authorized"`
+}

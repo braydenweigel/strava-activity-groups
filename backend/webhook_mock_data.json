@@ -1,0 +1,49 @@
+["Create Activity", {
+    "aspect_type": "create",
+    "event_time": 1775879352,
+    "object_id": 0,
+    "object_type": "activity",
+    "owner_id": 0,
+    "subscription_id": 0
+},
+"Update Activity - Title", {
+    "aspect_type": "update",
+    "event_time": 1775879352,
+    "object_id": 0,
+    "object_type": "activity",
+    "owner_id": 0,
+    "subscription_id": 0,
+    "updates": {
+        "title": "Monkey Business"
+    }
+},
+"Update Activity - Type", {
+    "aspect_type": "update",
+    "event_time": 1775879352,
+    "object_id": 0,
+    "object_type": "activity",
+    "owner_id": 0,
+    "subscription_id": 0,
+    "updates": {
+        "type": "VirtualRun"
+    }
+},
+"Delete Activity", {
+    "aspect_type": "delete",
+    "event_time": 1775879352,
+    "object_id": 0,
+    "object_type": "activity",
+    "owner_id": 0,
+    "subscription_id": 0
+},
+"Revoke Access", {
+    "aspect_type": "update",
+    "event_time": 1775879352,
+    "object_id": 0,
+    "object_type": "athlete",
+    "owner_id": 0,
+    "subscription_id": 0,
+    "updates": {
+        "authorized": "false"
+    }
+}]

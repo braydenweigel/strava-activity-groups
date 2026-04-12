@@ -35,6 +35,32 @@ func (h *StravaHandler) StravaWebhooks(c *gin.Context) {
 
 	//determine event type
 	if req.AspectType == "create" && req.ObjectType == "activity" {
+		userID, errUser := db.GetUserByAthleteID(c, h.DB, req.OwnerID)
+		if errUser != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
+		token, errToken := db.EnsureValidStravaAccessToken(c, h.DB, userID)
+		if errToken != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting token"})
+			return
+		}
+
+		activity, errFetch := db.FetchStravaActivityByID(token, strconv.Itoa(int(req.ObjectID)))
+		if errFetch != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": errFetch.Error()})
+			return
+		}
+
+		err := db.InsertActivities(c, h.DB, req.OwnerID, activity)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Error inserting activity"})
+			return
+		}
+
+		c.Status(http.StatusOK)
+		return
 
 	} else if req.AspectType == "update" && req.ObjectType == "activity" {
 		var name *string

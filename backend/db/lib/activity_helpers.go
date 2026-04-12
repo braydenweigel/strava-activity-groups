@@ -75,6 +75,40 @@ func InsertActivities(
 
 }
 
+func FetchStravaActivityByID(accessToken string, activityID string) ([]models.StravaActivity, error) {
+	//setup request
+	req, err := http.NewRequest(
+		"GET",
+		"https://www.strava.com/api/v3/activities/"+activityID,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+
+	//send request and check for errors
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("strava api error: %s", body)
+	}
+
+	var activity models.StravaActivity
+	if err := json.NewDecoder(resp.Body).Decode(&activity); err != nil {
+		return nil, err
+	}
+
+	return []models.StravaActivity{activity}, err
+
+}
+
 func FetchRecentStravaActivities(accessToken string) ([]models.StravaActivity, error) {
 	//setup request
 	req, err := http.NewRequest(

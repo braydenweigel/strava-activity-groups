@@ -113,19 +113,18 @@ func (h *StravaHandler) StravaWebhooks(c *gin.Context) {
 		return
 	}
 
-	//---activity created
-	//-----FetchStravaActivityByID()
-	//-----InsertActivities
-	//-----c.Status(http.StatusOK)
-
-	//---activity updated
-	//-----UpdateActivityByID()
-	//-----c.Status(http.StatusOK)
-
 	c.JSON(http.StatusBadRequest, gin.H{"error": "Could not determine event type"})
 }
 
 func (h *StravaHandler) StravaWebhooksVerify(c *gin.Context) {
+	challenge := c.Query("hub.challenge")
+	reqVerifyToken := c.Query("hub.verify_token")
+	actualVerifyToken := os.Getenv("VERIFY_TOKEN")
 
-	c.JSON(http.StatusOK, gin.H{"message": "strava webhooks"})
+	if reqVerifyToken != actualVerifyToken {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"hub.challenge": challenge})
 }

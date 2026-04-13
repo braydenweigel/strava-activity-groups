@@ -1,22 +1,28 @@
 package handlers
 
 import (
+	"context"
+	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	db "strava-activity-groups/backend/db/lib"
 	"strava-activity-groups/backend/models"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type StravaHandler struct {
-	DB *pgxpool.Pool
+	DB    *pgxpool.Pool
+	Queue *asynq.Client
 }
 
-func NewStravaHandler(db *pgxpool.Pool) *StravaHandler {
-	return &StravaHandler{DB: db}
+func NewStravaHandler(db *pgxpool.Pool, queue *asynq.Client) *StravaHandler {
+	return &StravaHandler{DB: db, Queue: queue}
 }
 
 func (h *StravaHandler) StravaWebhooks(c *gin.Context) {
@@ -33,87 +39,27 @@ func (h *StravaHandler) StravaWebhooks(c *gin.Context) {
 		return
 	}
 
-	//determine event type
-	if req.AspectType == "create" && req.ObjectType == "activity" {
-		userID, errUser := db.GetUserByAthleteID(c, h.DB, req.OwnerID)
-		if errUser != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-			return
-		}
-
-		token, errToken := db.EnsureValidStravaAccessToken(c, h.DB, userID)
-		if errToken != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting token"})
-			return
-		}
-
-		activity, errFetch := db.FetchStravaActivityByID(token, strconv.Itoa(int(req.ObjectID)))
-		if errFetch != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": errFetch.Error()})
-			return
-		}
-
-		err := db.InsertActivities(c, h.DB, req.OwnerID, activity)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error inserting activity"})
-			return
-		}
-
-		c.Status(http.StatusOK)
-		return
-
-	} else if req.AspectType == "update" && req.ObjectType == "activity" {
-		var name *string
-		var sport *string
-
-		if req.Updates != nil {
-			name = req.Updates.Title
-			sport = req.Updates.Type
-		}
-
-		err := db.UpdateActivityByActivityID(c, h.DB, strconv.FormatInt(req.ObjectID, 10), strconv.FormatInt(req.OwnerID, 10), name, sport)
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "error updating activity"})
-			return
-		}
-
-		c.Status(http.StatusOK)
-		return
-
-	} else if req.AspectType == "delete" && req.ObjectType == "activity" {
-		err := db.DeleteActivityByActivityID(c, h.DB, strconv.Itoa(int(req.ObjectID)), strconv.Itoa(int(req.OwnerID)))
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "error deleting activity"})
-			return
-		}
-
-		c.Status(http.StatusOK)
-		return
-
-	} else if req.AspectType == "update" && req.ObjectType == "athlete" {
-		userID, errUser := db.GetUserByAthleteID(c, h.DB, req.OwnerID)
-		if errUser != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-			return
-		}
-
-		errDelete := db.DeleteUserByID(c, h.DB, userID)
-		if errDelete != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error deleting user"})
-			return
-		}
-
-		errActivities := db.DeleteActivitiesByAthleteID(c, h.DB, strconv.Itoa(int(req.OwnerID)))
-		if errActivities != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error deleting activities"})
-			return
-		}
-
-		c.Status(http.StatusOK)
+	//add task to queue
+	payload, errMarshal := json.Marshal(req)
+	if errMarshal != nil {
+		c.JSON(500, gin.H{"error": "failed to marshal payload"})
 		return
 	}
+	task := asynq.NewTask("strava:webhook", payload)
 
-	c.JSON(http.StatusBadRequest, gin.H{"error": "Could not determine event type"})
+	if h.Queue != nil {
+		_, err := h.Queue.Enqueue(task,
+			asynq.MaxRetry(5),
+			asynq.Timeout(30*time.Second),
+		)
+
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	c.Status(200)
 }
 
 func (h *StravaHandler) StravaWebhooksVerify(c *gin.Context) {
@@ -127,4 +73,77 @@ func (h *StravaHandler) StravaWebhooksVerify(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"hub.challenge": challenge})
+}
+
+func (h *StravaHandler) ProcessWebhook(c context.Context, req models.StravaWebhookRequest) error {
+	log.Printf("Processing webhook: %+v\n", req)
+
+	//determine event type
+	if req.AspectType == "create" && req.ObjectType == "activity" {
+		userID, errUser := db.GetUserByAthleteID(c, h.DB, req.OwnerID)
+		if errUser != nil {
+			return errUser
+		}
+
+		token, errToken := db.EnsureValidStravaAccessToken(c, h.DB, userID)
+		if errToken != nil {
+			return errToken
+		}
+
+		activity, errFetch := db.FetchStravaActivityByID(token, strconv.Itoa(int(req.ObjectID)))
+		if errFetch != nil {
+			return errFetch
+		}
+
+		err := db.InsertActivities(c, h.DB, req.OwnerID, activity)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	} else if req.AspectType == "update" && req.ObjectType == "activity" {
+		var name *string
+		var sport *string
+
+		if req.Updates != nil {
+			name = req.Updates.Title
+			sport = req.Updates.Type
+		}
+
+		err := db.UpdateActivityByActivityID(c, h.DB, strconv.FormatInt(req.ObjectID, 10), strconv.FormatInt(req.OwnerID, 10), name, sport)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	} else if req.AspectType == "delete" && req.ObjectType == "activity" {
+		err := db.DeleteActivityByActivityID(c, h.DB, strconv.Itoa(int(req.ObjectID)), strconv.Itoa(int(req.OwnerID)))
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	} else if req.AspectType == "update" && req.ObjectType == "athlete" {
+		userID, errUser := db.GetUserByAthleteID(c, h.DB, req.OwnerID)
+		if errUser != nil {
+			return errUser
+		}
+
+		errDelete := db.DeleteUserByID(c, h.DB, userID)
+		if errDelete != nil {
+			return errDelete
+		}
+
+		errActivities := db.DeleteActivitiesByAthleteID(c, h.DB, strconv.Itoa(int(req.OwnerID)))
+		if errActivities != nil {
+			return errActivities
+		}
+
+		return nil
+	}
+
+	return nil
 }

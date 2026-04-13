@@ -1,29 +1,17 @@
 package router
 
 import (
-	"context"
-	"log"
 	"os"
-	"strava-activity-groups/backend/db"
 	"strava-activity-groups/backend/handlers"
 	"strava-activity-groups/backend/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/hibiken/asynq"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func SetupRouter() *gin.Engine {
-	ctx := context.Background()
-
-	//connect to db
-	pool, err := db.SetupPool(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := pool.Ping(ctx); err != nil {
-		log.Fatal("Database not reachable:", err)
-	}
+func SetupRouter(pool *pgxpool.Pool, queueClient *asynq.Client) *gin.Engine {
 
 	//initialize router
 	router := gin.Default()
@@ -37,7 +25,7 @@ func SetupRouter() *gin.Engine {
 
 	//setup handlers with db pool
 	authHandler := handlers.NewAuthHandler(pool)
-	stravaHandler := handlers.NewStravaHandler(pool)
+	stravaHandler := handlers.NewStravaHandler(pool, queueClient)
 	userHandler := handlers.NewUserHandler(pool)
 	tagHandler := handlers.NewTagHandler(pool)
 

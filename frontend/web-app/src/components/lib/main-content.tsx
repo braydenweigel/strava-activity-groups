@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { fetchInitialActivities, fetchMoreActivities } from "@/lib/store/activitySlice";
 import { AppDispatch, RootState } from "@/lib/store/store";
 import { fetchUser } from "@/lib/store/userSlice";
-import { act, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActivityCard from "./activity-card";
 import { Spinner } from "../ui/spinner";
@@ -21,8 +21,8 @@ export default function MainContent() {
         dispatch((fetchInitialActivities()))
         dispatch((fetchTags()))
     }, [dispatch])
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
-    const {data: activities, loading: activitiesLoading, loadingMore: activitiesLoadingMore, error: activitiesError} = useSelector((state: RootState) => state.activities)
+    const {data: user, loading: userLoading} = useSelector((state: RootState) => state.user)
+    const {data: activities, loading: activitiesLoading, loadingMore: activitiesLoadingMore} = useSelector((state: RootState) => state.activities)
     const [filter, setFilter] = React.useState<ActivityFilters>(structuredClone(initialFilter))
     const units = user?.units ?? "mi"
 
@@ -30,7 +30,7 @@ export default function MainContent() {
     const displayActivities = useMemo(() => {
         if (!user || !activities) return []
         return filterActivities(activities.data, filter, units)
-    }, [activities.data, filter, units])  
+    }, [filter, units, activities, user])  
     
 
     if (userLoading || activitiesLoading){

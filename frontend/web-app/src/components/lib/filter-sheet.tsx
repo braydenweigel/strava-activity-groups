@@ -1,12 +1,8 @@
 import React from "react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { Accordion } from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { CalendarIcon, SlidersHorizontal } from "lucide-react";
-import { Field, FieldLabel } from "../ui/field";
-import { Popover, PopoverTrigger } from "../ui/popover";
-import { addDays, format } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { SlidersHorizontal } from "lucide-react";
 import DateFilter from "./filters/date-filter";
 import { ActivityFilters, initialFilter } from "./filters/utils";
 import DistanceFilter from "./filters/distance-filter";

@@ -3,10 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import React from "react";
 import { ActivityFilters, formatSport, Sports } from "./utils";
-import { Badge } from "@/components/ui/badge";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store/store";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -17,10 +13,6 @@ interface FilterSheetProps {
 }
 
 export default function SportFilter({filter, setFilter}: FilterSheetProps){
-    const [error, setError] = React.useState<String | undefined>(undefined)
-
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
-
 
     const handleReset = () => {
         setFilter(filter => ({

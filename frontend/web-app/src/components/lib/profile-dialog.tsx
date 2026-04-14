@@ -7,7 +7,7 @@ import { DeleteProfile, Logout } from "@/lib/utils";
 
 
 export default function ProfileDialog(){
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
+    const {data: user } = useSelector((state: RootState) => state.user)
 
     const handleLogout = () => {
       Logout()

@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store/store";
 import { Input } from "@/components/ui/input";
-import { convertDistance } from "@/lib/utils";
 
 
 interface FilterSheetProps {
@@ -16,9 +15,7 @@ interface FilterSheetProps {
 }
 
 export default function DistanceFilter({filter, setFilter}: FilterSheetProps){
-    const [error, setError] = React.useState<String | undefined>(undefined)
-
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
+    const {data: user} = useSelector((state: RootState) => state.user)
 
 
     const handleReset = () => {
@@ -43,8 +40,7 @@ export default function DistanceFilter({filter, setFilter}: FilterSheetProps){
                         </FieldLabel>
                         <Input id="distance_min" type="number" placeholder="Min. Distance" value={filter.distance.greaterThan ?? ""}
                             onChange={(e) => {
-                                let distance 
-                                distance = Number(e.target.value)
+                                const distance = Number(e.target.value)
 
                                 setFilter(filter => ({
                                     ...filter,
@@ -63,8 +59,7 @@ export default function DistanceFilter({filter, setFilter}: FilterSheetProps){
                         </FieldLabel>
                         <Input id="distance_max" type="number" placeholder="Max. Distance" value={filter.distance.lessThan ?? ""}
                             onChange={(e) => {
-                                let distance 
-                                distance = Number(e.target.value)
+                                const distance = Number(e.target.value)
 
                                 setFilter(filter => ({
                                     ...filter,

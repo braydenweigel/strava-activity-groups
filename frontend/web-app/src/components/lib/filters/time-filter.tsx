@@ -3,11 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import React from "react";
 import { ActivityFilters } from "./utils";
-import { Badge } from "@/components/ui/badge";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store/store";
 import { Input } from "@/components/ui/input";
-import { convertDistance, convertTime, timeToSeconds } from "@/lib/utils";
+import { convertTime, timeToSeconds } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -20,8 +17,8 @@ interface FilterSheetProps {
 export default function TimeFilter({filter, setFilter}: FilterSheetProps){
     const [minInput, setMinInput] = React.useState("")
     const [maxInput, setMaxInput] = React.useState("")
-    const [minError, setMinError] = React.useState<String | undefined>(undefined)
-    const [maxError, setMaxError] = React.useState<String | undefined>(undefined)
+    const [minError, setMinError] = React.useState<string | undefined>(undefined)
+    const [maxError, setMaxError] = React.useState<string | undefined>(undefined)
 
     React.useEffect(() => {
         setMinInput(filter.time.greaterThan ? convertTime(filter.time.greaterThan): "")

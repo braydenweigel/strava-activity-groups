@@ -1,10 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
-import { useSelector } from "react-redux"
 import { twMerge } from "tailwind-merge"
-import { AppDispatch, RootState, store } from "./store/store"
+import { AppDispatch, store } from "./store/store"
 import { fetchToken } from "./store/tokenSlice"
 import { ActivityTag, createTag, createTagActivity, deleteTag, deleteTagActivity, Tag, updateTag } from "./store/tagSlice"
-import { act } from "react"
 
 const URL = process.env.NEXT_PUBLIC_API_URL ?? ""
 
@@ -137,8 +135,9 @@ export async function fetchGET(endpoint: string, token: string){
     if (res.status !== 401) return res //no auth error
 
     fetchToken()//get a new token
-    const { data: newToken } = useSelector((state: RootState) => state.token)
-
+    const state = store.getState()
+    const newToken = state.token.data
+    
     //error with refresh_token
     if (!newToken) Logout() 
 
@@ -151,7 +150,7 @@ export async function fetchGET(endpoint: string, token: string){
     })
 }
 
-export async function fetchPOST(endpoint: string, body: any){
+export async function fetchPOST(endpoint: string, body: object){
     const state = store.getState()
     const token = state.token.data
 
@@ -182,7 +181,7 @@ export async function fetchPOST(endpoint: string, body: any){
     })
 }
 
-export async function fetchPATCH(endpoint: string, body: any){
+export async function fetchPATCH(endpoint: string, body: object){
     const state = store.getState()
     const token = state.token.data
 

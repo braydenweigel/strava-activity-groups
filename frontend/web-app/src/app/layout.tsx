@@ -1,14 +1,12 @@
 "use client"
 
-import type { Metadata } from "next";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Provider, useDispatch } from "react-redux";
 import { AppDispatch, store } from "@/lib/store/store";
 import { useEffect } from "react";
 import { fetchToken } from "@/lib/store/tokenSlice";
-import { fetchUser } from "@/lib/store/userSlice";
-import { Button } from "@/components/ui/button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

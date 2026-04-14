@@ -1,9 +1,7 @@
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity } from "@/lib/store/activitySlice";
 import { calcPace, convertDate, convertDistance, convertElevation, convertTime } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "../ui/button";
 import { useState } from "react";
 import { Separator } from "../ui/separator"
 import ActivityTagsDialog from "./activity-tags-dialog";
@@ -19,7 +17,7 @@ type ActivityCardProps = {
 }
 
 export default function ActivityCard({ activity, units }: ActivityCardProps){
-    const {data, tree, loading, error} = useSelector((state: RootState) => state.tags)
+    const { data } = useSelector((state: RootState) => state.tags)
     const [expanded, setExpanded] = useState(false)
 
     const activityTags: Tag[] = [] //get this activity's tags    

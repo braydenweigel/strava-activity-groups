@@ -4,8 +4,6 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import React from "react";
 import { ActivityFilters } from "./utils";
 import { Badge } from "@/components/ui/badge";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store/store";
 import { Input } from "@/components/ui/input";
 
 
@@ -15,10 +13,6 @@ interface FilterSheetProps {
 }
 
 export default function HeartRateFilter({filter, setFilter}: FilterSheetProps){
-    const [error, setError] = React.useState<String | undefined>(undefined)
-
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
-
 
     const handleReset = () => {
         setFilter(filter => ({
@@ -42,8 +36,7 @@ export default function HeartRateFilter({filter, setFilter}: FilterSheetProps){
                         </FieldLabel>
                         <Input id="hr_min" type="number" placeholder="Min. HR" value={filter.averageHR.greaterThan ?? ""}
                             onChange={(e) => {
-                                let hr
-                                hr = Number(e.target.value)
+                                const hr = Number(e.target.value)
 
                                 setFilter(filter => ({
                                     ...filter,
@@ -62,8 +55,7 @@ export default function HeartRateFilter({filter, setFilter}: FilterSheetProps){
                         </FieldLabel>
                         <Input id="hr_max" type="number" placeholder="Max. HR" value={filter.averageHR.lessThan ?? ""}
                             onChange={(e) => {
-                                let hr
-                                hr = Number(e.target.value)
+                                const hr = Number(e.target.value)
 
                                 setFilter(filter => ({
                                     ...filter,

@@ -15,9 +15,7 @@ interface FilterSheetProps {
 }
 
 export default function ElevationFilter({filter, setFilter}: FilterSheetProps){
-    const [error, setError] = React.useState<String | undefined>(undefined)
-
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
+    const {data: user} = useSelector((state: RootState) => state.user)
 
 
     const handleReset = () => {
@@ -42,8 +40,7 @@ export default function ElevationFilter({filter, setFilter}: FilterSheetProps){
                         </FieldLabel>
                         <Input id="elevation_min" type="number" placeholder="Min. Elevation" value={filter.elevation.greaterThan ?? ""}
                             onChange={(e) => {
-                                let elevation 
-                                elevation = Number(e.target.value)
+                                const elevation = Number(e.target.value)
 
                                 setFilter(filter => ({
                                     ...filter,
@@ -62,8 +59,7 @@ export default function ElevationFilter({filter, setFilter}: FilterSheetProps){
                         </FieldLabel>
                         <Input id="elevation_max" type="number" placeholder="Max. elevation" value={filter.elevation.lessThan ?? ""}
                             onChange={(e) => {
-                                let elevation 
-                                elevation = Number(e.target.value)
+                                const elevation = Number(e.target.value)
 
                                 setFilter(filter => ({
                                     ...filter,

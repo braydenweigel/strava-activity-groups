@@ -1,4 +1,4 @@
-import { EllipsisVertical, Plus, Tags } from "lucide-react";
+import { EllipsisVertical, Tags } from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { useState } from "react";
@@ -14,7 +14,7 @@ import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export default function TagsDialog(){
-    const {data, tree, loading, error} = useSelector((state: RootState) => state.tags)
+    const {data, tree } = useSelector((state: RootState) => state.tags)
 
     return (
         <Dialog>
@@ -46,7 +46,7 @@ function TagItem({tag, offset}: TagItemProps){
     const [name, setName] = useState(tag.tagname)
     const [parent, setParent] = useState(tag.parent_id ?? "No Parent")
 
-    const {data, tree, loading, error} = useSelector((state: RootState) => state.tags)
+    const {data } = useSelector((state: RootState) => state.tags)
     const tagChildren = getTagChildren(tag)
 
     const handleDelete = () => {

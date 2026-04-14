@@ -1,4 +1,4 @@
-import { CircleX, EllipsisVertical, Plus, Tags } from "lucide-react";
+import { CircleX, Plus, Tags } from "lucide-react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Activity } from "@/lib/store/activitySlice";
@@ -8,7 +8,7 @@ import { Tag } from "@/lib/store/tagSlice";
 import { ButtonGroup } from "../ui/button-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Field, FieldLabel } from "../ui/field";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createNewTagActivity, deleteTagActivityWithID } from "@/lib/utils";
 
 type ActivityTagsDialogProps = {
@@ -17,8 +17,8 @@ type ActivityTagsDialogProps = {
 
 export default function ActivityTagsDialog({ activity }: ActivityTagsDialogProps){
     const dispatch = useDispatch<AppDispatch>()
-    const {data, tree, loading, error} = useSelector((state: RootState) => state.tags)
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
+    const {data} = useSelector((state: RootState) => state.tags)
+    const {data: user} = useSelector((state: RootState) => state.user)
     const [newTag, setNewTag] = useState<string | undefined>(undefined)
 
     const activityTags: Tag[] = [] //get this activity's tags

@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
 import React from "react";
 import { ActivityFilters } from "./utils";
 
@@ -16,7 +15,6 @@ interface FilterSheetProps {
 export default function DateFilter({filter, setFilter}: FilterSheetProps){
     const [afterOpen, setAfterOpen] = React.useState(false)
     const [beforeOpen, setBeforeOpen] = React.useState(false)
-    const [error, setError] = React.useState<String | undefined>(undefined)
 
     const handleReset = () => {
         setFilter(filter => ({

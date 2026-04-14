@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { fetchUser } from "./userSlice"
 
 export interface Token {
     access_token: string

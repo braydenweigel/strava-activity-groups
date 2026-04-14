@@ -3,12 +3,8 @@
 import LoginCard from "@/components/lib/login-card";
 import MainContent from "@/components/lib/main-content";
 import ProfileDialog from "@/components/lib/profile-dialog";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { RootState } from "@/lib/store/store";
-import { Logout } from "@/lib/utils";
-import React from "react";
 import { useSelector } from "react-redux";
 
 export default function Home() {

@@ -8,8 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useState } from "react";
 import { AppDispatch, RootState } from "@/lib/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { createTag } from '../../lib/store/tagSlice'
-import { createNewTag, fetchPOST } from "@/lib/utils";
+import { createNewTag } from "@/lib/utils";
 
 type CreateTagDialogProps = {
     tags: Tag[]
@@ -22,7 +21,7 @@ export type SelectParent = {
 
 export function CreateTagDialog({tags}: CreateTagDialogProps){
     const dispatch = useDispatch<AppDispatch>()
-    const {data: user, loading: userLoading, error: userError} = useSelector((state: RootState) => state.user)
+    const {data: user} = useSelector((state: RootState) => state.user)
     const [name, setName] = useState("")
     const [parent, setParent] = useState("No Parent")
 

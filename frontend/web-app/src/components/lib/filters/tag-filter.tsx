@@ -14,7 +14,7 @@ interface FilterSheetProps {
 }
 
 export default function TagFilter({filter, setFilter}: FilterSheetProps){
-    const {data, tree, loading, error} = useSelector((state: RootState) => state.tags)
+    const {tree} = useSelector((state: RootState) => state.tags)
 
 
     const handleReset = () => {

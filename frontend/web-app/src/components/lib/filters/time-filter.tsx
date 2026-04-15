@@ -46,7 +46,7 @@ export default function TimeFilter({filter, setFilter}: FilterSheetProps){
     return (
         <AccordionItem value="time">
             <AccordionTrigger>Activity Time</AccordionTrigger>
-            <AccordionContent className=" grid grid-cols-1">
+            <AccordionContent className="h-auto grid grid-cols-1">
                 <RadioGroup value={filter.time.type} className="flex mb-3 gap-4"
                     onValueChange={(value => {
                         setFilter((filter) => ({
@@ -153,7 +153,7 @@ export default function TimeFilter({filter, setFilter}: FilterSheetProps){
                         {maxError && (<p className="text-sm text-red-500 mt-1">{maxError}</p>)}
                     </Field>
                 </div>
-                <Button variant="outline" size="xs" className="justify-self-end mt-2 -mb-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white" onClick={handleReset}>Reset</Button>
+                <Button variant="destructive" size="xs" className="justify-self-end my-2" onClick={handleReset}>Reset</Button>
             </AccordionContent>
         </AccordionItem>
     )

@@ -27,11 +27,11 @@ export default function TagFilter({filter, setFilter}: FilterSheetProps){
     return (
         <AccordionItem value="tag">
             <AccordionTrigger>Tags</AccordionTrigger>
-            <AccordionContent className=" grid grid-cols-1">
+            <AccordionContent className="h-auto grid grid-cols-1">
                 <ScrollArea className="h-48">
                     {tree.map((tag) => (<div key={tag.id} className="mb-1"><TagCheckbox tag={tag} offset={0} filter={filter} setFilter={setFilter}/></div>))}
                 </ScrollArea>
-                <Button variant="outline" size="xs" className="justify-self-end mt-2 -mb-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white" onClick={handleReset}>Reset</Button>
+                <Button variant="destructive" size="xs" className="justify-self-end my-2" onClick={handleReset}>Reset</Button>
             </AccordionContent>
         </AccordionItem>
     )

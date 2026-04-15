@@ -2,6 +2,7 @@
 
 import LoginCard from "@/components/lib/login-card";
 import MainContent from "@/components/lib/main-content";
+import { ModeToggle } from "@/components/lib/mode-toggle";
 import ProfileDialog from "@/components/lib/profile-dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { RootState } from "@/lib/store/store";
@@ -16,6 +17,7 @@ export default function Home() {
       {loggedIn ? 
         <div className="flex justify-end m-2 gap-2">
           <ProfileDialog/>
+          <ModeToggle/>
         </div>
         : 
         null 

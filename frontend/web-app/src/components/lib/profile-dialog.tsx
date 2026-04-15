@@ -20,7 +20,7 @@ export default function ProfileDialog(){
     return (
         <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" >Profile</Button>
+              <Button variant="outline" size="default" >Profile</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

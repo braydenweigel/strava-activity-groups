@@ -31,7 +31,7 @@ export default function ElevationFilter({filter, setFilter}: FilterSheetProps){
     return (
         <AccordionItem value="elevation">
             <AccordionTrigger>Elevation</AccordionTrigger>
-            <AccordionContent className=" grid grid-cols-1">
+            <AccordionContent className="h-auto grid grid-cols-1">
                 <div className="flex justify-between gap-4">
                     <Field className="mx-auto w-44">
                         <FieldLabel htmlFor="elevation" className="-mb-2">
@@ -72,7 +72,7 @@ export default function ElevationFilter({filter, setFilter}: FilterSheetProps){
                         />
                     </Field>
                 </div>
-                <Button variant="outline" size="xs" className="justify-self-end mt-2 -mb-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white" onClick={handleReset}>Reset</Button>
+                <Button variant="destructive" size="xs" className="justify-self-end my-2" onClick={handleReset}>Reset</Button>
             </AccordionContent>
         </AccordionItem>
     )

@@ -1,6 +1,7 @@
-<img src="/frontend/web-app/src/app/icon.png" alt="Strava Activity Groups Icon" width="100" height="100">.  
+<img src="/frontend/web-app/src/app/icon.png" alt="Strava Activity Groups Icon" width="100" height="100"> 
+
 # Strava Activity Groups
-Add custom tags to your Strava activities.  
+#### Add custom tags to your Strava activities  
 
 ## About
 ### Tech Stack
@@ -16,6 +17,8 @@ Add custom tags to your Strava activities.
 - React
 - Typescript
 - Tailwind CSS
+- Redux
+- shadcn
 
 
 

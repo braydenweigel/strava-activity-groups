@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"strava-activity-groups/backend/db"
 	"strava-activity-groups/backend/router"
 
@@ -27,7 +28,7 @@ func main() {
 
 	//initialize queue client
 	queueClient := asynq.NewClient(asynq.RedisClientOpt{
-		Addr: "localhost:6379",
+		Addr: os.Getenv("REDIS_ADDR"),
 		DB:   0,
 	})
 	defer queueClient.Close()

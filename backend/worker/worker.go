@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 	"strava-activity-groups/backend/handlers"
 	"strava-activity-groups/backend/models"
 
@@ -12,7 +13,7 @@ import (
 
 func StartWorker(h *handlers.StravaHandler) {
 	server := asynq.NewServer(
-		asynq.RedisClientOpt{Addr: "localhost:6379", DB: 0},
+		asynq.RedisClientOpt{Addr: os.Getenv("REDIS_ADDR"), DB: 0},
 		asynq.Config{
 			Concurrency: 10,
 			Queues: map[string]int{

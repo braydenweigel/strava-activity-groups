@@ -1,58 +1,65 @@
-version: '3.9'
+version: "3.9"
 
 services:
   postgres:
     image: postgres:16
-    container_name: strava_postgres
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      - "${POSTGRES_PORT}:5432"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/migrations:/docker-entrypoint-initdb.d
 
   redis:
     image: redis:7
-    container_name: strava_redis
     restart: unless-stopped
-    ports:
-      - "${REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
 
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: strava_api
+    image: braydenweigel/activity-tags:latest
     depends_on:
       - postgres
       - redis
-    env_file:
-      - .env
     environment:
       POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
       REDIS_ADDR: redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      VERIFY_TOKEN: ${VERIFY_TOKEN}
+      SUBSCRIPTION_ID: ${SUBSCRIPTION_ID}
+      FRONTEND_WEB_URL: ${FRONTEND_WEB_URL}
+      FRONTEND_MOBILE_URL: ${FRONTEND_MOBILE_URL}
     ports:
       - "8080:8080"
-    command: ["./api"]
+    command: ./api
 
   worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: strava_worker
+    image: braydenweigel/activity-tags:latest
     depends_on:
       - postgres
       - redis
-    env_file:
-      - .env
     environment:
       POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
       REDIS_ADDR: redis:6379
-    command: ["./worker"]
+      JWT_SECRET: ${JWT_SECRET}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      VERIFY_TOKEN: ${VERIFY_TOKEN}
+      SUBSCRIPTION_ID: ${SUBSCRIPTION_ID}
+      FRONTEND_WEB_URL: ${FRONTEND_WEB_URL}
+      FRONTEND_MOBILE_URL: ${FRONTEND_MOBILE_URL}
+    command: ./worker
 
   asynqmon:
     image: hibiken/asynqmon
@@ -60,7 +67,6 @@ services:
       REDIS_ADDR: redis:6379
     ports:
       - "8081:8080"
-
 
 volumes:
   postgres_data:

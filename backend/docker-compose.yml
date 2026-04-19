@@ -1,73 +1,69 @@
-version: "3.9"
-
+version: '3.9'
 services:
   postgres:
-    image: postgres:16
+    image: 'postgres:16'
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
+      - 'postgres_data:/var/lib/postgresql/data'
   redis:
-    image: redis:7
+    image: 'redis:7'
     restart: unless-stopped
     volumes:
-      - redis_data:/data
-
+      - 'redis_data:/data'
   api:
-    image: braydenweigel/activity-tags:latest
+    image: 'braydenweigel/activity-tags:latest'
     depends_on:
       - postgres
       - redis
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      REDIS_ADDR: redis:6379
-      JWT_SECRET: ${JWT_SECRET}
-      CLIENT_ID: ${CLIENT_ID}
-      CLIENT_SECRET: ${CLIENT_SECRET}
-      VERIFY_TOKEN: ${VERIFY_TOKEN}
-      SUBSCRIPTION_ID: ${SUBSCRIPTION_ID}
-      FRONTEND_WEB_URL: ${FRONTEND_WEB_URL}
-      FRONTEND_MOBILE_URL: ${FRONTEND_MOBILE_URL}
-    ports:
-      - "8080:8080"
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
+      REDIS_ADDR: 'redis:6379'
+      JWT_SECRET: '${JWT_SECRET}'
+      CLIENT_ID: '${CLIENT_ID}'
+      CLIENT_SECRET: '${CLIENT_SECRET}'
+      VERIFY_TOKEN: '${VERIFY_TOKEN}'
+      SUBSCRIPTION_ID: '${SUBSCRIPTION_ID}'
+      FRONTEND_WEB_URL: '${FRONTEND_WEB_URL}'
+      FRONTEND_MOBILE_URL: '${FRONTEND_MOBILE_URL}'
     command: ./api
-
   worker:
-    image: braydenweigel/activity-tags:latest
+    image: 'braydenweigel/activity-tags:latest'
     depends_on:
       - postgres
       - redis
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      REDIS_ADDR: redis:6379
-      JWT_SECRET: ${JWT_SECRET}
-      CLIENT_ID: ${CLIENT_ID}
-      CLIENT_SECRET: ${CLIENT_SECRET}
-      VERIFY_TOKEN: ${VERIFY_TOKEN}
-      SUBSCRIPTION_ID: ${SUBSCRIPTION_ID}
-      FRONTEND_WEB_URL: ${FRONTEND_WEB_URL}
-      FRONTEND_MOBILE_URL: ${FRONTEND_MOBILE_URL}
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
+      REDIS_ADDR: 'redis:6379'
+      JWT_SECRET: '${JWT_SECRET}'
+      CLIENT_ID: '${CLIENT_ID}'
+      CLIENT_SECRET: '${CLIENT_SECRET}'
+      VERIFY_TOKEN: '${VERIFY_TOKEN}'
+      SUBSCRIPTION_ID: '${SUBSCRIPTION_ID}'
+      FRONTEND_WEB_URL: '${FRONTEND_WEB_URL}'
+      FRONTEND_MOBILE_URL: '${FRONTEND_MOBILE_URL}'
     command: ./worker
-
   asynqmon:
     image: hibiken/asynqmon
     environment:
-      REDIS_ADDR: redis:6379
-    ports:
-      - "8081:8080"
-
+      REDIS_ADDR: 'redis:6379'
+  migrate:
+    image: 'braydenweigel/activity-tags:latest'
+    depends_on:
+      - postgres
+    command:
+      - /app/run-migrations.sh
 volumes:
-  postgres_data:
-  redis_data:
+  postgres_data: null
+  redis_data: null
